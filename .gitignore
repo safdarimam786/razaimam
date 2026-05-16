@@ -1,0 +1,7 @@
+node_modules
+dist
+tmp-*/
+chrome-*.txt
+dev-*.err
+dev-*.log
+*.pma
