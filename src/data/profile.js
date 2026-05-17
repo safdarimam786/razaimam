@@ -7,7 +7,7 @@ import {
 } from 'react-icons/bi';
 import { FiLayers, FiSliders, FiZap } from 'react-icons/fi';
 
-const v = (f) => `/videos/${f.replace(/ /g, '%20')}`;
+const v = (id) => `https://drive.usercontent.google.com/download?id=${id}`;
 
 export const profile = {
   name: 'Raza Imam',
@@ -69,22 +69,22 @@ export const workflow = [
 ];
 
 const portfolioSeed = [
-  ['Cinematic Videos', 'Cinematic reel 1', 'cinematic reel 1.mp4', '00:30'],
-  ['Cinematic Videos', 'Cinematic reel 2', 'cinematic reel 2.mp4', '00:30'],
-  ['Motion Graphics', 'Motion graphic 1', 'motion graphic 1.mp4', '00:30'],
-  ['Motion Graphics', 'Motion graphic 2', 'motion graphic 2.mp4', '00:30'],
-  ['Motion Graphics', 'Motion graphic 3', 'motion graphic 3.mp4', '00:30'],
-  ['Motion Graphics', 'Motion graphic 4', 'motion graphic 4.mp4', '00:30'],
-  ['Motion Graphics', 'Motion graphic 5', 'motion graphic 5.mp4', '00:30'],
-  ['Motion Graphics', 'Motion graphic 6', 'motion graphic 6.mp4', '00:30'],
+  ['Cinematic Videos', 'Cinematic reel 1', '1yfUXxU-hMJX8eUW8rtA21DuEppXFgi1u', '00:30'],
+  ['Cinematic Videos', 'Cinematic reel 2', '1q57qliOUD0xw7rPbheyMEsoFL7kklxRz', '00:30'],
+  ['Motion Graphics', 'Motion graphic 1', '1tFFw4Toptq9_4RaEmBACUKrfRDaUqjUU', '00:30'],
+  ['Motion Graphics', 'Motion graphic 2', '1qN3x8gzmjZm7Q6_BKvcCubMRY2oIwvem', '00:30'],
+  ['Motion Graphics', 'Motion graphic 3', '1vL6botHEFmgmQbLNzC7O6cULKbuLWLGO', '00:30'],
+  ['Motion Graphics', 'Motion graphic 4', '1Z6vkRZPGiSGhBpYgnTf01wfRPTDb_3nt', '00:30'],
+  ['Motion Graphics', 'Motion graphic 5', '1GLMF-hnHeRfCPIT2BZAxuhMT7Xha2Q9e', '00:30'],
+  ['Motion Graphics', 'Motion graphic 6', '1KoDKMpYNbTYv-F-SIpyCdNjpFmsmAYGi', '00:30'],
 ];
 
-export const portfolio = portfolioSeed.map(([category, title, filename, duration], index) => ({
+export const portfolio = portfolioSeed.map(([category, title, fileId, duration], index) => ({
   id: `video-${index}`,
   title,
   category,
   duration,
-  videoSrc: v(filename),
+  videoSrc: v(fileId),
   track: index % 4,
   color: ['premiere', 'after', 'cyan', 'amber'][index % 4],
 }));
