@@ -69,13 +69,14 @@ export const workflow = [
 ];
 
 const portfolioSeed = [
-  ['Cinematic Videos', 'Railway cinematic', 'Railway cinematic.mp4', '01:18'],
-  ['Cinematic Videos', 'Fast paced reel cinematic', 'fast paced reel cinematic.mp4', '00:52'],
-  ['Motion Graphics', 'Srijan final motion graphic', 'srijan final motion graphic.mp4', '00:34'],
-  ['Motion Graphics', 'Final ali abdal style motion graphic', 'final ali abdal style motion graphic.mp4', '00:41'],
-  ['Motion Graphics', 'After reel motion graphic', 'after reel motion graphic.mp4', '00:29'],
-  ['Motion Graphics', 'AI job sample motion graphic', 'AI job sample motion graphic.mp4', '00:37'],
-  ['Motion Graphics', 'The reel motion graphic', 'the reel motion graphic.mp4', '00:45'],
+  ['Cinematic Videos', 'Cinematic reel 1', 'cinematic reel 1.mp4', '00:30'],
+  ['Cinematic Videos', 'Cinematic reel 2', 'cinematic reel 2.mp4', '00:30'],
+  ['Motion Graphics', 'Motion graphic 1', 'motion graphic 1.mp4', '00:30'],
+  ['Motion Graphics', 'Motion graphic 2', 'motion graphic 2.mp4', '00:30'],
+  ['Motion Graphics', 'Motion graphic 3', 'motion graphic 3.mp4', '00:30'],
+  ['Motion Graphics', 'Motion graphic 4', 'motion graphic 4.mp4', '00:30'],
+  ['Motion Graphics', 'Motion graphic 5', 'motion graphic 5.mp4', '00:30'],
+  ['Motion Graphics', 'Motion graphic 6', 'motion graphic 6.mp4', '00:30'],
 ];
 
 export const portfolio = portfolioSeed.map(([category, title, filename, duration], index) => ({
