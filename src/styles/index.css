@@ -689,6 +689,7 @@ a {
   height: 100%;
   width: 100%;
   z-index: 0;
+  pointer-events: none;
   background:
     linear-gradient(135deg, rgba(36, 232, 255, 0.08) 0%, transparent 50%),
     radial-gradient(ellipse at 30% 40%, rgba(155, 92, 255, 0.06) 0%, transparent 60%),
