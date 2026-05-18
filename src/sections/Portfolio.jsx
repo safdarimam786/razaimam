@@ -6,19 +6,31 @@ import { portfolio } from '../data/profile.js';
 
 const categories = ['All', 'Cinematic Videos', 'Motion Graphics'];
 
-function VideoFrame({ src, className, poster }) {
+function VideoFrame({ src, className }) {
   const ref = useRef(null);
+  const [loaded, setLoaded] = useState(false);
+  const [error, setError] = useState(false);
   useEffect(() => {
-    try {
-      const el = ref.current;
-      if (!el) return;
-      if (el.readyState >= 1) { el.currentTime = 0.1; return; }
-      const on = () => { el.currentTime = 0.1; };
-      el.addEventListener('loadedmetadata', on);
-      return () => el.removeEventListener('loadedmetadata', on);
-    } catch {}
+    setLoaded(false);
+    setError(false);
+    const el = ref.current;
+    if (!el) return;
+    if (el.readyState >= 1) { el.currentTime = 0.1; setLoaded(true); return; }
+    const onMeta = () => { el.currentTime = 0.1; setLoaded(true); };
+    const onErr = () => { setError(true); };
+    el.addEventListener('loadedmetadata', onMeta);
+    el.addEventListener('error', onErr);
+    return () => {
+      el.removeEventListener('loadedmetadata', onMeta);
+      el.removeEventListener('error', onErr);
+    };
   }, [src]);
-  return <video ref={ref} src={src} muted playsInline preload="metadata" poster={poster} className={className} />;
+  return (
+    <>
+      {!loaded && <div className="clip-media-placeholder" />}
+      <video ref={ref} src={src} muted playsInline preload="metadata" className={className} style={error ? { display: 'none' } : undefined} />
+    </>
+  );
 }
 
 function PortfolioPreview({ item, playing, onOpen }) {
@@ -228,7 +240,9 @@ export function Portfolio() {
                 </button>
               </div>
               <div className="portfolio-player bg-black">
-                <video src={selected.videoSrc} className="h-full w-full" controls autoPlay playsInline preload="metadata" />
+                <video key={selected.id} src={selected.videoSrc} className="h-full w-full" controls autoPlay muted playsInline preload="metadata">
+                  Your browser does not support video playback.
+                </video>
               </div>
               <div className="portfolio-actions flex flex-wrap items-center justify-between gap-3 p-4 shrink-0">
                 <span className="inline-flex items-center gap-2 text-sm text-slate-400">

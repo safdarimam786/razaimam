@@ -7,7 +7,7 @@ import {
 } from 'react-icons/bi';
 import { FiLayers, FiSliders, FiZap } from 'react-icons/fi';
 
-const v = (id) => `https://drive.usercontent.google.com/download?id=${id}`;
+const v = (id) => `https://docs.google.com/uc?export=download&confirm=t&id=${id}`;
 
 export const profile = {
   name: 'Raza Imam',

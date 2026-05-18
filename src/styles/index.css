@@ -683,6 +683,20 @@ a {
   background: rgba(0, 0, 0, 0.48);
 }
 
+.clip-media-placeholder {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 0;
+  background:
+    linear-gradient(135deg, rgba(36, 232, 255, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 30% 40%, rgba(155, 92, 255, 0.06) 0%, transparent 60%),
+    repeating-linear-gradient(45deg, transparent, transparent 12px, rgba(255, 255, 255, 0.015) 12px, rgba(255, 255, 255, 0.015) 13px),
+    repeating-linear-gradient(-45deg, transparent, transparent 12px, rgba(255, 255, 255, 0.015) 12px, rgba(255, 255, 255, 0.015) 13px),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.55) 100%);
+}
+
 .clip-media img,
 .clip-media-img,
 .clip-hover-video,
@@ -1044,6 +1058,18 @@ a {
   aspect-ratio: 16 / 9;
   flex: 0 0 auto;
   overflow: hidden;
+  background: #000;
+  display: grid;
+  place-items: center;
+  color: rgba(255,255,255,0.4);
+  font-size: 0.85rem;
+}
+
+.portfolio-player video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .portfolio-player iframe {
