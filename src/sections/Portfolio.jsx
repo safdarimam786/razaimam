@@ -6,7 +6,7 @@ import { portfolio } from '../data/profile.js';
 
 const categories = ['All', 'Cinematic Videos', 'Motion Graphics'];
 
-function VideoFrame({ src, className }) {
+function VideoFrame({ src, className, poster }) {
   const ref = useRef(null);
   useEffect(() => {
     try {
@@ -18,7 +18,7 @@ function VideoFrame({ src, className }) {
       return () => el.removeEventListener('loadedmetadata', on);
     } catch {}
   }, [src]);
-  return <video ref={ref} src={src} muted playsInline preload="metadata" className={className} />;
+  return <video ref={ref} src={src} muted playsInline preload="metadata" poster={poster} className={className} />;
 }
 
 function PortfolioPreview({ item, playing, onOpen }) {
@@ -122,6 +122,7 @@ function PortfolioClip({ item, index = 0, onOpen, onPreview, onPreviewEnd, class
         <motion.div className="clip-hover-wash" animate={{ opacity: previewing ? 1 : 0 }} />
         <div className="clip-play">
           <FiPlay />
+          <span className="clip-play-label">Play</span>
         </div>
       </div>
       <div className="clip-content">
@@ -227,7 +228,7 @@ export function Portfolio() {
                 </button>
               </div>
               <div className="portfolio-player bg-black">
-                <video src={selected.videoSrc} className="h-full w-full" controls autoPlay playsInline />
+                <video src={selected.videoSrc} className="h-full w-full" controls autoPlay playsInline preload="metadata" />
               </div>
               <div className="portfolio-actions flex flex-wrap items-center justify-between gap-3 p-4 shrink-0">
                 <span className="inline-flex items-center gap-2 text-sm text-slate-400">
