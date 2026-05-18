@@ -7,7 +7,8 @@ import {
 } from 'react-icons/bi';
 import { FiLayers, FiSliders, FiZap } from 'react-icons/fi';
 
-const v = (id) => `https://docs.google.com/uc?export=download&confirm=t&id=${id}`;
+const v = (id) => `https://drive.usercontent.google.com/download?id=${id}`;
+const e = (id) => `https://drive.google.com/file/d/${id}/preview`;
 
 export const profile = {
   name: 'Raza Imam',
@@ -85,6 +86,7 @@ export const portfolio = portfolioSeed.map(([category, title, fileId, duration],
   category,
   duration,
   videoSrc: v(fileId),
+  embedSrc: e(fileId),
   track: index % 4,
   color: ['premiere', 'after', 'cyan', 'amber'][index % 4],
 }));

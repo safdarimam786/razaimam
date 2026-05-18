@@ -342,6 +342,120 @@ a {
   }
 }
 
+.model-crosshair {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 5rem;
+  height: 5rem;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.model-crosshair-x,
+.model-crosshair-y {
+  position: absolute;
+  background: rgba(36, 232, 255, 0.2);
+}
+
+.model-crosshair-x {
+  left: 0;
+  top: 50%;
+  width: 100%;
+  height: 1px;
+  transform: translateY(-50%);
+  box-shadow: 0 0 8px rgba(36, 232, 255, 0.3);
+}
+
+.model-crosshair-y {
+  left: 50%;
+  top: 0;
+  width: 1px;
+  height: 100%;
+  transform: translateX(-50%);
+  box-shadow: 0 0 8px rgba(36, 232, 255, 0.3);
+}
+
+.model-crosshair-dot {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: #24e8ff;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 16px rgba(36, 232, 255, 0.6);
+  animation: crosshairPulse 2s ease-in-out infinite;
+}
+
+@keyframes crosshairPulse {
+  0%, 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 0.5; transform: translate(-50%, -50%) scale(0.6); }
+}
+
+.model-rig {
+  position: absolute;
+  left: 50%;
+  bottom: 18%;
+  width: 2px;
+  height: 24%;
+  background: linear-gradient(to top, rgba(36, 232, 255, 0.3), transparent);
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.model-rig::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 1.2rem;
+  height: 1.2rem;
+  border-radius: 999px;
+  border: 1px solid rgba(36, 232, 255, 0.3);
+  background: rgba(36, 232, 255, 0.08);
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 20px rgba(36, 232, 255, 0.1);
+  animation: rigFloat 3s ease-in-out infinite;
+}
+
+@keyframes rigFloat {
+  0%, 100% { transform: translate(-50%, -50%) translateY(0); }
+  50% { transform: translate(-50%, -50%) translateY(-4px); }
+}
+
+.model-slider-track {
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  bottom: 48%;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.model-slider-thumb {
+  position: absolute;
+  top: 50%;
+  width: 40%;
+  height: 3px;
+  background: linear-gradient(90deg, #9b5cff, #24e8ff);
+  border-radius: 999px;
+  transform: translateY(-50%);
+  box-shadow: 0 0 12px rgba(36, 232, 255, 0.3);
+  animation: sliderSweep 4s ease-in-out infinite;
+}
+
+@keyframes sliderSweep {
+  0%, 100% { left: 0; }
+  50% { left: 60%; }
+}
+
 .skill-card {
   min-height: 190px;
   transition: border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
@@ -425,6 +539,44 @@ a {
 .preview-video {
   z-index: 2;
   border: 0;
+}
+
+.preview-video-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.preview-video-pulse {
+  position: absolute;
+  inset: 20%;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(36, 232, 255, 0.15), transparent 70%);
+  animation: previewPulse 2s ease-in-out infinite;
+  box-shadow: 0 0 60px rgba(36, 232, 255, 0.1);
+}
+
+.preview-video-label {
+  position: relative;
+  z-index: 1;
+  padding: 0.5rem 1.2rem;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(36, 232, 255, 0.3);
+  color: #24e8ff;
+  font-size: 0.65rem;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  backdrop-filter: blur(8px);
+}
+
+@keyframes previewPulse {
+  0%, 100% { transform: scale(0.85); opacity: 0.5; }
+  50% { transform: scale(1.15); opacity: 1; }
 }
 
 .preview-scanlines {
@@ -696,6 +848,21 @@ a {
     repeating-linear-gradient(45deg, transparent, transparent 12px, rgba(255, 255, 255, 0.015) 12px, rgba(255, 255, 255, 0.015) 13px),
     repeating-linear-gradient(-45deg, transparent, transparent 12px, rgba(255, 255, 255, 0.015) 12px, rgba(255, 255, 255, 0.015) 13px),
     linear-gradient(180deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.55) 100%);
+}
+
+.clip-media-fallback {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, rgba(36, 232, 255, 0.12), rgba(155, 92, 255, 0.12));
+  color: rgba(255, 255, 255, 0.2);
+}
+
+.clip-media-fallback svg {
+  width: 2.4rem;
+  height: 2.4rem;
 }
 
 .clip-media img,

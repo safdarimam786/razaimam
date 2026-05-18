@@ -1,6 +1,6 @@
 ﻿import React, { useMemo, useState, useRef, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { FiExternalLink, FiMaximize2, FiPlay, FiX } from 'react-icons/fi';
+import { FiExternalLink, FiMaximize2, FiPlay, FiX, FiFilm } from 'react-icons/fi';
 import { SectionHeader } from '../components/SectionHeader.jsx';
 import { portfolio } from '../data/profile.js';
 
@@ -27,7 +27,8 @@ function VideoFrame({ src, className }) {
   }, [src]);
   return (
     <>
-      {!loaded && <div className="clip-media-placeholder" />}
+      {!loaded && !error && <div className="clip-media-placeholder" />}
+      {error && <div className="clip-media-fallback"><FiFilm /></div>}
       <video ref={ref} src={src} muted playsInline preload="metadata" className={className} style={error ? { display: 'none' } : undefined} />
     </>
   );
@@ -58,16 +59,17 @@ function PortfolioPreview({ item, playing, onOpen }) {
           <VideoFrame src={item.videoSrc} className="preview-screen-img" />
           <AnimatePresence mode="wait">
             {playing && (
-              <motion.video
+              <motion.div
                 key={item.id}
-                src={item.videoSrc}
-                className="preview-video"
-                autoPlay loop muted playsInline
-                initial={{ opacity: 0, scale: 1.04, filter: 'blur(10px)' }}
-                animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
-                exit={{ opacity: 0, scale: 0.98, filter: 'blur(8px)' }}
+                className="preview-video-overlay"
+                initial={{ opacity: 0, scale: 1.04 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.98 }}
                 transition={{ duration: 0.35 }}
-              />
+              >
+                <div className="preview-video-pulse" />
+                <div className="preview-video-label">Preview Active</div>
+              </motion.div>
             )}
           </AnimatePresence>
           <div className="preview-scanlines" />
@@ -240,9 +242,7 @@ export function Portfolio() {
                 </button>
               </div>
               <div className="portfolio-player bg-black">
-                <video key={selected.id} src={selected.videoSrc} className="h-full w-full" controls autoPlay muted playsInline preload="metadata">
-                  Your browser does not support video playback.
-                </video>
+                <iframe key={selected.id} src={selected.embedSrc} className="h-full w-full" allow="autoplay; encrypted-media" allowFullScreen title={selected.title} />
               </div>
               <div className="portfolio-actions flex flex-wrap items-center justify-between gap-3 p-4 shrink-0">
                 <span className="inline-flex items-center gap-2 text-sm text-slate-400">
