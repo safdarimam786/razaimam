@@ -1325,6 +1325,317 @@ a {
   transform: translate(-50%, -50%) scale(0.82);
 }
 
+/* ── Bento Grid (After Effects timeline) ── */
+
+.bento-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.bento-grid-inner {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.bento-preview {
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02)),
+    rgba(12, 14, 28, 0.82);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 18px 60px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(18px);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.bento-preview-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border-bottom: 1px solid var(--line);
+  padding: 0.65rem 1rem;
+  background: rgba(0, 0, 0, 0.32);
+  color: rgb(148 163 184);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.bento-preview-time {
+  color: #24e8ff;
+  font-family: monospace;
+  font-size: 0.78rem;
+  letter-spacing: 0.15em;
+}
+
+.bento-preview-body {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  cursor: pointer;
+  background: #02030a;
+}
+
+.bento-preview-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.78;
+  transition: opacity 350ms ease, transform 500ms ease;
+}
+
+.bento-preview-body:hover .bento-preview-img {
+  opacity: 0.55;
+  transform: scale(1.04);
+}
+
+.bento-preview-play {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  transform: translate(-50%, -50%);
+  padding: 0.6rem 1.2rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 999px;
+  background: rgba(6, 7, 13, 0.55);
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  backdrop-filter: blur(14px);
+  opacity: 0;
+  transition: opacity 240ms ease, transform 240ms ease, background 240ms ease;
+}
+
+.bento-preview-body:hover .bento-preview-play {
+  opacity: 1;
+}
+
+.bento-preview-play:hover {
+  background: rgba(36, 232, 255, 0.18);
+  transform: translate(-50%, -50%) scale(1.06);
+}
+
+.bento-preview-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.85rem 1rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-top: 1px solid var(--line);
+}
+
+.bento-preview-info h3 {
+  font-family: Space Grotesk, Inter, sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+  color: white;
+}
+
+.bento-preview-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin-left: auto;
+  color: rgb(148 163 184);
+  font-size: 0.68rem;
+  font-weight: 600;
+}
+
+.bento-preview-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+/* ── Bento Clip ── */
+
+.bento-clip {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0.85rem;
+  cursor: pointer;
+  color: white;
+  text-align: left;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 14px 36px rgba(0, 0, 0, 0.22);
+  outline: none;
+  transform-style: preserve-3d;
+}
+
+.bento-clip.premiere {
+  background: linear-gradient(135deg, rgba(155, 92, 255, 0.5), rgba(155, 92, 255, 0.12));
+}
+
+.bento-clip.after {
+  background: linear-gradient(135deg, rgba(95, 123, 255, 0.5), rgba(95, 123, 255, 0.12));
+}
+
+.bento-clip.cyan {
+  background: linear-gradient(135deg, rgba(36, 232, 255, 0.36), rgba(36, 232, 255, 0.08));
+}
+
+.bento-clip.amber {
+  background: linear-gradient(135deg, rgba(247, 185, 85, 0.45), rgba(247, 185, 85, 0.1));
+}
+
+.bento-clip-track {
+  display: flex;
+  align-items: center;
+  padding: 0.35rem 0.7rem;
+  background: rgba(0, 0, 0, 0.24);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.bento-track-num {
+  font-family: monospace;
+  font-size: 0.6rem;
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.35);
+  letter-spacing: 0.05em;
+}
+
+.bento-clip-media {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.bento-clip-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.8;
+  transition: opacity 300ms ease, transform 400ms ease;
+}
+
+.bento-clip:hover .bento-clip-img {
+  opacity: 0.35;
+  transform: scale(1.06);
+}
+
+.bento-clip-play-icon {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 3;
+  display: grid;
+  height: 2.4rem;
+  width: 2.4rem;
+  place-items: center;
+  border: 2px solid rgba(255, 255, 255, 0.45);
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: opacity 200ms ease, transform 200ms ease, background 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
+  backdrop-filter: blur(10px);
+}
+
+.bento-clip-play-icon svg {
+  width: 1rem;
+  height: 1rem;
+  margin-left: 0.15rem;
+}
+
+.bento-clip:hover .bento-clip-play-icon {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1.08);
+  background: rgba(36, 232, 255, 0.18);
+  border-color: rgba(36, 232, 255, 0.6);
+  box-shadow: 0 0 20px rgba(36, 232, 255, 0.3);
+}
+
+.bento-clip-info {
+  padding: 0.7rem;
+  background: linear-gradient(to bottom, rgba(6, 7, 13, 0.6), rgba(6, 7, 13, 0.88));
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.4rem;
+}
+
+.bento-clip-info h3 {
+  font-family: Space Grotesk, Inter, sans-serif;
+  font-size: 0.92rem;
+  font-weight: 800;
+  line-height: 1.15;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bento-clip-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.bento-clip-bar {
+  height: 3px;
+  min-width: 30%;
+  background: linear-gradient(90deg, rgba(36, 232, 255, 0.55), rgba(155, 92, 255, 0.2));
+  border-radius: 0 2px 2px 0;
+  transition: width 400ms ease;
+}
+
+.bento-clip:hover .bento-clip-bar {
+  background: linear-gradient(90deg, #24e8ff, #9b5cff);
+}
+
+/* ── Responsive Bento ── */
+
+@media (max-width: 1023px) {
+  .bento-grid-inner {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .bento-preview-meta {
+    display: none;
+  }
+}
+
+@media (max-width: 639px) {
+  .bento-grid-inner {
+    grid-template-columns: 1fr;
+  }
+
+  .bento-clip-wide {
+    grid-column: span 1 !important;
+  }
+
+  .bento-preview-info {
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .bento-preview-info h3 {
+    width: 100%;
+    font-size: 0.85rem;
+  }
+}
+
 .liquid-nav-glass {
   position: relative;
   overflow: hidden;

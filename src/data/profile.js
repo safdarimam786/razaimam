@@ -7,8 +7,7 @@ import {
 } from 'react-icons/bi';
 import { FiLayers, FiSliders, FiZap } from 'react-icons/fi';
 
-const v = (id) => `https://drive.usercontent.google.com/download?id=${id}`;
-const e = (id) => `https://drive.google.com/file/d/${id}/preview`;
+const cloudBase = 'https://res.cloudinary.com/dyvnrtkpx';
 
 export const profile = {
   name: 'Raza Imam',
@@ -69,24 +68,23 @@ export const workflow = [
   'Final Delivery'
 ];
 
-const portfolioSeed = [
-  ['Cinematic Videos', 'Cinematic reel 1', '1yfUXxU-hMJX8eUW8rtA21DuEppXFgi1u', '00:30'],
-  ['Cinematic Videos', 'Cinematic reel 2', '1q57qliOUD0xw7rPbheyMEsoFL7kklxRz', '00:30'],
-  ['Motion Graphics', 'Motion graphic 1', '1tFFw4Toptq9_4RaEmBACUKrfRDaUqjUU', '00:30'],
-  ['Motion Graphics', 'Motion graphic 2', '1qN3x8gzmjZm7Q6_BKvcCubMRY2oIwvem', '00:30'],
-  ['Motion Graphics', 'Motion graphic 3', '1vL6botHEFmgmQbLNzC7O6cULKbuLWLGO', '00:30'],
-  ['Motion Graphics', 'Motion graphic 4', '1Z6vkRZPGiSGhBpYgnTf01wfRPTDb_3nt', '00:30'],
-  ['Motion Graphics', 'Motion graphic 5', '1GLMF-hnHeRfCPIT2BZAxuhMT7Xha2Q9e', '00:30'],
-  ['Motion Graphics', 'Motion graphic 6', '1KoDKMpYNbTYv-F-SIpyCdNjpFmsmAYGi', '00:30'],
-];
+const colors = ['premiere', 'after', 'cyan', 'amber'];
 
-export const portfolio = portfolioSeed.map(([category, title, fileId, duration], index) => ({
-  id: `video-${index}`,
-  title,
-  category,
-  duration,
-  videoSrc: v(fileId),
-  embedSrc: e(fileId),
-  track: index % 4,
-  color: ['premiere', 'after', 'cyan', 'amber'][index % 4],
-}));
+export const portfolio = [
+  { category: 'Cinematic Videos', title: 'Railway Cinematic',           file: 'v1779171263/Railway_cinematic_imw8de.mp4',        duration: '00:30' },
+  { category: 'Motion Graphics',   title: 'Srijan Motion Graphic',      file: 'v1779171261/srijan_final_motion_graphic_fathmv.mp4', duration: '00:30' },
+  { category: 'Motion Graphics',   title: 'After Reel Motion Graphic',  file: 'v1779171241/after_reel_motion_graphic_ero7jo.mp4',  duration: '00:30' },
+  { category: 'Cinematic Videos',  title: 'Fast Paced Reel',            file: 'v1779171189/fast_paced_reel_cinematic_tfadro.mp4',  duration: '00:30' },
+  { category: 'Motion Graphics',   title: 'The Reel Motion Graphic',    file: 'v1779171185/the_reel_motion_graphic_hgyuz4.mp4',    duration: '00:30' },
+  { category: 'Motion Graphics',   title: 'Ali Abdal Style',            file: 'v1779171165/final_ali_abdal_style_motion_graphic_faijdp.mp4', duration: '00:30' },
+  { category: 'Motion Graphics',   title: 'AI Job Sample',              file: 'v1779171152/AI_job_sample_motion_graphic_ywnpja.mp4',     duration: '00:30' },
+].map((item, index) => {
+  const publicId = item.file.replace('.mp4', '');
+  return {
+    id: `video-${index}`,
+    ...item,
+    videoSrc: `${cloudBase}/video/upload/q_auto/f_auto/${item.file}`,
+    thumbnail: `${cloudBase}/image/upload/w_400/${publicId}.jpg`,
+    color: colors[index % colors.length],
+  };
+});
