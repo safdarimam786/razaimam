@@ -1,4 +1,4 @@
-﻿import React, { useMemo, useState, useRef } from 'react';
+﻿import React, { useMemo, useState, useRef, useEffect, useCallback } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { FiExternalLink, FiMaximize2, FiPlay, FiX, FiFilm, FiClock } from 'react-icons/fi';
 import { SectionHeader } from '../components/SectionHeader.jsx';
@@ -6,28 +6,74 @@ import { portfolio } from '../data/profile.js';
 
 const categories = ['All', 'Cinematic Videos', 'Motion Graphics'];
 
-function VideoFrame({ thumbnail, className }) {
-  const [loaded, setLoaded] = useState(false);
-  const [error, setError] = useState(false);
+function formatDuration(seconds) {
+  if (!seconds || !isFinite(seconds)) return '00:00';
+  const m = Math.floor(seconds / 60);
+  const s = Math.floor(seconds % 60);
+  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+}
+
+function formatTimecode(seconds) {
+  if (!seconds || !isFinite(seconds)) return '00:00:00:00';
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = Math.floor(seconds % 60);
+  const f = Math.floor((seconds % 1) * 30);
+  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}:${String(f).padStart(2, '0')}`;
+}
+
+function HoverVideo({ thumbnail, videoSrc, className, onDuration }) {
+  const [hovering, setHovering] = useState(false);
+  const [videoReady, setVideoReady] = useState(false);
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    if (!videoRef.current) return;
+    if (hovering) {
+      videoRef.current.currentTime = 0;
+      videoRef.current.play().catch(() => {});
+    } else {
+      videoRef.current.pause();
+    }
+  }, [hovering]);
+
+  const showVideo = hovering && videoReady;
 
   return (
-    <>
-      {!loaded && !error && <div className="clip-media-placeholder" />}
-      {error && <div className="clip-media-fallback"><FiFilm /></div>}
+    <div
+      className="hover-video-wrap"
+      onMouseEnter={() => setHovering(true)}
+      onMouseLeave={() => setHovering(false)}
+    >
       <img
         src={thumbnail}
         alt=""
         className={className}
-        style={error ? { display: 'none' } : undefined}
-        onLoad={() => setLoaded(true)}
-        onError={() => setError(true)}
+        style={{ display: showVideo ? 'none' : undefined }}
         loading="lazy"
       />
-    </>
+      <video
+        ref={videoRef}
+        src={videoSrc}
+        muted
+        loop
+        playsInline
+        preload="none"
+        className={className}
+        style={{ display: showVideo ? undefined : 'none' }}
+        onLoadedData={() => setVideoReady(true)}
+        onLoadedMetadata={() => {
+          if (onDuration && videoRef.current) {
+            onDuration(videoRef.current.duration);
+          }
+        }}
+        onError={() => setVideoReady(false)}
+      />
+    </div>
   );
 }
 
-function BentoPreview({ item, onOpen }) {
+function BentoPreview({ item, onOpen, onDuration }) {
   if (!item) return null;
   return (
     <motion.div
@@ -44,10 +90,10 @@ function BentoPreview({ item, onOpen }) {
           <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
         </div>
         <span>Composition Viewer</span>
-        <span className="bento-preview-time">00:00:00:00</span>
+        <span className="bento-preview-time">{formatTimecode(item.duration)}</span>
       </div>
       <div className="bento-preview-body" onClick={() => onOpen(item)} role="button" tabIndex={0} onKeyDown={(e) => e.key === 'Enter' && onOpen(item)}>
-        <VideoFrame thumbnail={item.thumbnail} className="bento-preview-img" />
+        <HoverVideo thumbnail={item.thumbnail} videoSrc={item.videoSrc} className="bento-preview-img" onDuration={(d) => onDuration(item.id, d)} />
         <div className="preview-scanlines" />
         <div className="bento-preview-play">
           <FiPlay />
@@ -58,7 +104,7 @@ function BentoPreview({ item, onOpen }) {
         <span className="clip-tag">{item.category}</span>
         <h3>{item.title}</h3>
         <div className="bento-preview-meta">
-          <span><FiClock size={12} /> {item.duration}</span>
+          <span><FiClock size={12} /> {formatDuration(item.duration)}</span>
           <span>1920 × 1080</span>
           <span>29.97 fps</span>
         </div>
@@ -67,12 +113,16 @@ function BentoPreview({ item, onOpen }) {
   );
 }
 
-function BentolClip({ item, index, onOpen, span }) {
+function BentolClip({ item, index, onOpen, onDuration }) {
+  const [hovering, setHovering] = useState(false);
+
   return (
     <motion.div
       layout
-      className={`bento-clip ${item.color} ${span === 'wide' ? 'bento-clip-wide' : ''}`}
+      className={`bento-clip ${item.color}`}
       onClick={() => onOpen(item)}
+      onMouseEnter={() => setHovering(true)}
+      onMouseLeave={() => setHovering(false)}
       whileHover={{ scale: 1.02, y: -4, z: 10 }}
       transition={{ type: 'spring', stiffness: 260, damping: 20 }}
     >
@@ -80,15 +130,15 @@ function BentolClip({ item, index, onOpen, span }) {
         <span className="bento-track-num">V{index + 1}</span>
       </div>
       <div className="bento-clip-media">
-        <VideoFrame thumbnail={item.thumbnail} className="bento-clip-img" />
-        <div className="bento-clip-play-icon">
+        <HoverVideo thumbnail={item.thumbnail} videoSrc={item.videoSrc} className="bento-clip-img" onDuration={(d) => onDuration(item.id, d)} />
+        <div className={`bento-clip-play-icon ${hovering ? 'is-hovering' : ''}`}>
           <FiPlay />
         </div>
       </div>
       <div className="bento-clip-info">
         <div className="bento-clip-meta">
           <span className="clip-tag">{item.category}</span>
-          <span className="clip-duration"><FiClock size={10} /> {item.duration}</span>
+          <span className="clip-duration"><FiClock size={10} /> {formatDuration(item.duration)}</span>
         </div>
         <h3>{item.title}</h3>
       </div>
@@ -100,6 +150,8 @@ function BentolClip({ item, index, onOpen, span }) {
 export function Portfolio() {
   const [active, setActive] = useState('All');
   const [selected, setSelected] = useState(null);
+  const [durations, setDurations] = useState({});
+
   const videoRef = useRef(null);
 
   const filtered = useMemo(
@@ -107,10 +159,22 @@ export function Portfolio() {
     [active]
   );
 
+  const portfolioWithDuration = useMemo(
+    () => filtered.map((item) => ({ ...item, duration: durations[item.id] || item.duration })),
+    [filtered, durations]
+  );
+
+  const handleDuration = useCallback((id, seconds) => {
+    setDurations((prev) => {
+      if (prev[id] === seconds) return prev;
+      return { ...prev, [id]: seconds };
+    });
+  }, []);
+
   return (
     <section id="portfolio" className="section-pad overflow-hidden">
       <SectionHeader kicker="Sequence 01" title="Portfolio timeline">
-        Bento grid of video projects inspired by After Effects. Click any clip to play.
+        Bento grid of video projects inspired by After Effects. Hover any clip to preview, click to play full.
       </SectionHeader>
       <div className="mx-auto max-w-7xl">
         <div className="mb-6 flex flex-wrap justify-center gap-2" data-reveal>
@@ -126,21 +190,18 @@ export function Portfolio() {
         </div>
 
         <div className="bento-grid">
-          <BentoPreview item={filtered[0]} onOpen={setSelected} />
+          <BentoPreview item={portfolioWithDuration[0]} onOpen={setSelected} onDuration={handleDuration} />
 
           <div className="bento-grid-inner">
-            {filtered.map((item, index) => {
-              const span = index === 0 || index === 4 ? 'wide' : 'narrow';
-              return (
-                <BentolClip
-                  key={item.id}
-                  item={item}
-                  index={index}
-                  span={span}
-                  onOpen={setSelected}
-                />
-              );
-            })}
+            {portfolioWithDuration.map((item, index) => (
+              <BentolClip
+                key={item.id}
+                item={item}
+                index={index}
+                onOpen={setSelected}
+                onDuration={handleDuration}
+              />
+            ))}
           </div>
         </div>
       </div>

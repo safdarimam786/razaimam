@@ -84,7 +84,7 @@ export const portfolio = [
     id: `video-${index}`,
     ...item,
     videoSrc: `${cloudBase}/video/upload/q_auto/f_auto/${item.file}`,
-    thumbnail: `${cloudBase}/image/upload/w_400/${publicId}.jpg`,
+    thumbnail: `${cloudBase}/video/upload/w_400/so_0/${publicId}.jpg`,
     color: colors[index % colors.length],
   };
 });
