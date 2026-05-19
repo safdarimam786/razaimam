@@ -78,13 +78,9 @@ export const portfolio = [
   { category: 'Motion Graphics',   title: 'The Reel Motion Graphic',    file: 'v1779171185/the_reel_motion_graphic_hgyuz4.mp4',    duration: '00:30' },
   { category: 'Motion Graphics',   title: 'Ali Abdal Style',            file: 'v1779171165/final_ali_abdal_style_motion_graphic_faijdp.mp4', duration: '00:30' },
   { category: 'Motion Graphics',   title: 'AI Job Sample',              file: 'v1779171152/AI_job_sample_motion_graphic_ywnpja.mp4',     duration: '00:30' },
-].map((item, index) => {
-  const publicId = item.file.replace('.mp4', '');
-  return {
-    id: `video-${index}`,
-    ...item,
-    videoSrc: `${cloudBase}/video/upload/q_auto/f_auto/${item.file}`,
-    thumbnail: `${cloudBase}/video/upload/w_400/so_0/${publicId}.jpg`,
-    color: colors[index % colors.length],
-  };
-});
+].map((item, index) => ({
+  id: `video-${index}`,
+  ...item,
+  videoSrc: `${cloudBase}/video/upload/q_auto/f_auto/${item.file}`,
+  color: colors[index % colors.length],
+}));

@@ -22,53 +22,49 @@ function formatTimecode(seconds) {
   return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}:${String(f).padStart(2, '0')}`;
 }
 
-function HoverVideo({ thumbnail, videoSrc, className, onDuration }) {
-  const [hovering, setHovering] = useState(false);
-  const [videoReady, setVideoReady] = useState(false);
+function HoverVideo({ videoSrc, className, onDuration }) {
+  const [error, setError] = useState(false);
   const videoRef = useRef(null);
+  const hoveringRef = useRef(false);
 
   useEffect(() => {
-    if (!videoRef.current) return;
-    if (hovering) {
-      videoRef.current.currentTime = 0;
-      videoRef.current.play().catch(() => {});
-    } else {
-      videoRef.current.pause();
-    }
-  }, [hovering]);
+    const el = videoRef.current;
+    if (!el) return;
+    setError(false);
 
-  const showVideo = hovering && videoReady;
+    const seekToFirst = () => { if (el && !hoveringRef.current) el.currentTime = 0.1; };
+
+    const onMeta = () => {
+      if (onDuration) onDuration(el.duration);
+      seekToFirst();
+    };
+
+    if (el.readyState >= 1) onMeta();
+    el.addEventListener('loadedmetadata', onMeta);
+    el.addEventListener('error', () => setError(true));
+
+    return () => {
+      el.removeEventListener('loadedmetadata', onMeta);
+      el.removeEventListener('error', () => setError(true));
+    };
+  }, [videoSrc, onDuration]);
+
+  const handleMouseEnter = () => {
+    hoveringRef.current = true;
+    const el = videoRef.current;
+    if (el) el.play().catch(() => {});
+  };
+
+  const handleMouseLeave = () => {
+    hoveringRef.current = false;
+    const el = videoRef.current;
+    if (el) { el.pause(); el.currentTime = 0.1; }
+  };
 
   return (
-    <div
-      className="hover-video-wrap"
-      onMouseEnter={() => setHovering(true)}
-      onMouseLeave={() => setHovering(false)}
-    >
-      <img
-        src={thumbnail}
-        alt=""
-        className={className}
-        style={{ display: showVideo ? 'none' : undefined }}
-        loading="lazy"
-      />
-      <video
-        ref={videoRef}
-        src={videoSrc}
-        muted
-        loop
-        playsInline
-        preload="none"
-        className={className}
-        style={{ display: showVideo ? undefined : 'none' }}
-        onLoadedData={() => setVideoReady(true)}
-        onLoadedMetadata={() => {
-          if (onDuration && videoRef.current) {
-            onDuration(videoRef.current.duration);
-          }
-        }}
-        onError={() => setVideoReady(false)}
-      />
+    <div className="hover-video-wrap" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+      {error && <div className="bento-media-fallback"><FiFilm /></div>}
+      <video ref={videoRef} src={videoSrc} muted loop playsInline preload="metadata" className={className} />
     </div>
   );
 }
@@ -93,7 +89,7 @@ function BentoPreview({ item, onOpen, onDuration }) {
         <span className="bento-preview-time">{formatTimecode(item.duration)}</span>
       </div>
       <div className="bento-preview-body" onClick={() => onOpen(item)} role="button" tabIndex={0} onKeyDown={(e) => e.key === 'Enter' && onOpen(item)}>
-        <HoverVideo thumbnail={item.thumbnail} videoSrc={item.videoSrc} className="bento-preview-img" onDuration={(d) => onDuration(item.id, d)} />
+        <HoverVideo videoSrc={item.videoSrc} className="bento-preview-img" onDuration={(d) => onDuration(item.id, d)} />
         <div className="preview-scanlines" />
         <div className="bento-preview-play">
           <FiPlay />
@@ -130,7 +126,7 @@ function BentolClip({ item, index, onOpen, onDuration }) {
         <span className="bento-track-num">V{index + 1}</span>
       </div>
       <div className="bento-clip-media">
-        <HoverVideo thumbnail={item.thumbnail} videoSrc={item.videoSrc} className="bento-clip-img" onDuration={(d) => onDuration(item.id, d)} />
+        <HoverVideo videoSrc={item.videoSrc} className="bento-clip-img" onDuration={(d) => onDuration(item.id, d)} />
         <div className={`bento-clip-play-icon ${hovering ? 'is-hovering' : ''}`}>
           <FiPlay />
         </div>
@@ -251,11 +247,12 @@ export function Portfolio() {
                 </span>
                 <a
                   href={selected.videoSrc}
-                  download
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-bold text-ink"
                 >
                   <FiExternalLink />
-                  Download Video
+                  See Full Video
                 </a>
               </div>
             </motion.div>

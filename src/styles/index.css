@@ -1341,6 +1341,34 @@ a {
   object-fit: cover;
 }
 
+.bento-media-placeholder {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(135deg, rgba(36, 232, 255, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 30% 40%, rgba(155, 92, 255, 0.06) 0%, transparent 60%),
+    repeating-linear-gradient(45deg, transparent, transparent 12px, rgba(255, 255, 255, 0.015) 12px, rgba(255, 255, 255, 0.015) 13px),
+    repeating-linear-gradient(-45deg, transparent, transparent 12px, rgba(255, 255, 255, 0.015) 12px, rgba(255, 255, 255, 0.015) 13px),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.55) 100%);
+}
+
+.bento-media-fallback {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, rgba(36, 232, 255, 0.12), rgba(155, 92, 255, 0.12));
+  color: rgba(255, 255, 255, 0.2);
+}
+
+.bento-media-fallback svg {
+  width: 2.4rem;
+  height: 2.4rem;
+}
+
 /* ── Bento Grid (After Effects timeline) ── */
 
 .bento-grid {
