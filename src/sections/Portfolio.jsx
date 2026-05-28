@@ -1,6 +1,6 @@
 ﻿import React, { useMemo, useState, useRef, useEffect, useCallback } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { FiExternalLink, FiMaximize2, FiPlay, FiX, FiFilm, FiClock } from 'react-icons/fi';
+import { FiPlay, FiX, FiFilm, FiClock } from 'react-icons/fi';
 import { SectionHeader } from '../components/SectionHeader.jsx';
 import { portfolio } from '../data/profile.js';
 
@@ -170,7 +170,7 @@ export function Portfolio() {
   return (
     <section id="portfolio" className="section-pad overflow-hidden">
       <SectionHeader kicker="Sequence 01" title="Portfolio timeline">
-        Bento grid of video projects inspired by After Effects. Hover any clip to preview, click to play full.
+        Bento grid of video projects inspired by After Effects. Hover any clip to preview, click for full view.
       </SectionHeader>
       <div className="mx-auto max-w-7xl">
         <div className="mb-6 flex flex-wrap justify-center gap-2" data-reveal>
@@ -205,56 +205,35 @@ export function Portfolio() {
       <AnimatePresence>
         {selected && (
           <motion.div
-            className="portfolio-modal fixed inset-0 z-[80] bg-black/82 p-3 backdrop-blur-xl md:grid md:place-items-center md:p-4"
+            className="fixed inset-0 z-[80] flex items-center justify-center bg-black p-0"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            onClick={() => setSelected(null)}
           >
             <motion.div
               key={selected.id}
-              className="portfolio-dialog flex w-full flex-col overflow-hidden rounded-2xl border border-cyan/25 bg-panel shadow-glow md:mx-auto md:max-w-5xl"
-              initial={{ scale: 0.92, y: 40 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.92, y: 40 }}
+              className="relative flex h-full w-full items-center justify-center"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex items-center justify-between border-b border-line bg-black/30 px-4 py-3 shrink-0">
-                <div className="min-w-0">
-                  <p className="text-xs uppercase tracking-[0.22em] text-cyan">{selected.category}</p>
-                  <h3 className="font-display truncate text-xl font-bold text-white">{selected.title}</h3>
-                </div>
-                <button
-                  className="grid h-10 w-10 shrink-0 place-items-center rounded-lg border border-line"
-                  onClick={() => setSelected(null)}
-                  aria-label="Close video"
-                >
-                  <FiX />
-                </button>
-              </div>
-              <div className="portfolio-player bg-black">
-                <video
-                  ref={videoRef}
-                  src={selected.videoSrc}
-                  className="h-full w-full"
-                  controls
-                  autoPlay
-                  playsInline
-                />
-              </div>
-              <div className="portfolio-actions flex flex-wrap items-center justify-between gap-3 p-4 shrink-0">
-                <span className="inline-flex items-center gap-2 text-sm text-slate-400">
-                  <FiMaximize2 className="text-cyan" />
-                  Full playback
-                </span>
-                <a
-                  href={selected.videoSrc}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-bold text-ink"
-                >
-                  <FiExternalLink />
-                  See Full Video
-                </a>
-              </div>
+              <button
+                className="absolute right-4 top-4 z-10 grid h-10 w-10 place-items-center rounded-full bg-white/10 text-white backdrop-blur-sm hover:bg-white/20"
+                onClick={() => setSelected(null)}
+                aria-label="Close video"
+              >
+                <FiX size={20} />
+              </button>
+              <video
+                ref={videoRef}
+                src={selected.videoSrc}
+                className="max-h-full max-w-full"
+                controls
+                autoPlay
+                playsInline
+              />
             </motion.div>
           </motion.div>
         )}
