@@ -31,12 +31,12 @@ export function SplineScene() {
         </div>
       </div>
       <div className="pointer-events-none absolute inset-0 bg-radial-mask" />
-      <div className="absolute left-4 top-4 flex items-center gap-2 rounded-lg border border-line bg-ink/70 px-3 py-2 text-xs uppercase tracking-[0.18em] text-slate-300 backdrop-blur">
-        <FiFilm className="text-cyan" />
+      <div className="absolute left-2 top-2 flex items-center gap-1.5 rounded-lg border border-line bg-ink/70 px-2 py-1 text-[0.55rem] uppercase tracking-[0.18em] text-slate-300 backdrop-blur">
+        <FiFilm className="text-cyan" size={10} />
         Video Model
       </div>
-      <div className="absolute right-4 top-4 flex items-center gap-1.5 rounded-lg border border-line bg-black/50 px-3 py-2 text-[0.55rem] uppercase tracking-[0.18em] text-cyan/70 backdrop-blur">
-        <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-400" />
+      <div className="absolute right-2 top-2 flex items-center gap-1 rounded-lg border border-line bg-black/50 px-2 py-1 text-[0.5rem] uppercase tracking-[0.16em] text-cyan/70 backdrop-blur">
+        <span className="inline-block h-1 w-1 rounded-full bg-emerald-400" />
         Live
       </div>
       <div className="absolute bottom-4 left-4 right-4 grid grid-cols-8 gap-1">
