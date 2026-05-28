@@ -4,13 +4,17 @@ export function ScrollProgress() {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    const onScroll = () => {
-      const height = document.documentElement.scrollHeight - window.innerHeight;
-      setProgress(height > 0 ? window.scrollY / height : 0);
+    const lenis = window.lenis;
+    if (!lenis) return;
+
+    const onScroll = (e) => {
+      const limit = e.limit || document.documentElement.scrollHeight - window.innerHeight;
+      setProgress(limit > 0 ? e.scroll / limit : 0);
     };
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+
+    lenis.on('scroll', onScroll);
+    onScroll({ scroll: lenis.scroll, limit: lenis.limit });
+    return () => lenis.off('scroll', onScroll);
   }, []);
 
   return (

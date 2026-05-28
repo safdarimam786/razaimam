@@ -5,14 +5,21 @@ export function useLenis() {
   const rafRef = useRef(null);
 
   useEffect(() => {
+    const isLowDevice = window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+      navigator.hardwareConcurrency <= 4;
+
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      lerp: 0.06,
-      wheelMultiplier: 1,
+      orientation: 'vertical',
+      gestureOrientation: 'vertical',
       smoothWheel: true,
-      smoothTouch: false,
-      touchMultiplier: 1.5,
+      smoothTouch: true,
+      wheelMultiplier: isLowDevice ? 0.7 : 1,
+      touchMultiplier: isLowDevice ? 0.8 : 1.2,
+      lerp: isLowDevice ? 0.06 : 0.1,
+      syncTouch: true,
+      syncTouchLerp: isLowDevice ? 0.05 : 0.075,
       infinite: false,
     });
 
@@ -24,8 +31,12 @@ export function useLenis() {
     }
     rafRef.current = requestAnimationFrame(raf);
 
+    const handleResize = () => lenis.resize();
+    window.addEventListener('resize', handleResize);
+
     return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      window.removeEventListener('resize', handleResize);
       window.lenis = null;
       lenis.destroy();
     };
