@@ -9,9 +9,17 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     emptyOutDir: true,
+    cssCodeSplit: true,
+    modulePreload: { polyfill: false },
     rollupOptions: {
-      input: fileURLToPath(new URL('./index.html', import.meta.url))
-    }
+      input: fileURLToPath(new URL('./index.html', import.meta.url)),
+      output: {
+        manualChunks: {
+          vendor: ['framer-motion', 'gsap', 'lenis'],
+          icons: ['react-icons', 'lucide-react'],
+        },
+      },
+    },
   },
   server: {
     host: '127.0.0.1',

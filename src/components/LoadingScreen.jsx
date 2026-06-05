@@ -5,8 +5,8 @@ export function LoadingScreen() {
   return (
     <motion.div
       className="fixed inset-0 z-[100] flex items-center justify-center bg-[#050612]"
-      exit={{ opacity: 0, filter: 'blur(18px)' }}
-      transition={{ duration: 0.8, ease: 'easeInOut' }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.5, ease: 'easeInOut' }}
     >
       <div className="absolute inset-0 bg-grid bg-[length:42px_42px] opacity-30" />
       <div className="absolute inset-x-0 top-1/2 h-40 -translate-y-1/2 bg-gradient-to-r from-transparent via-premiere/20 to-transparent blur-3xl" />
@@ -30,7 +30,7 @@ export function LoadingScreen() {
             className="absolute inset-y-0 left-0 bg-gradient-to-r from-premiere via-after to-cyan"
             initial={{ width: '0%' }}
             animate={{ width: '100%' }}
-            transition={{ duration: 2.15, ease: 'easeInOut' }}
+            transition={{ duration: 1.2, ease: 'easeInOut' }}
           />
           <div className="absolute inset-0 grid grid-cols-12 gap-px p-1">
             {Array.from({ length: 12 }).map((_, index) => (

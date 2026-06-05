@@ -64,7 +64,7 @@ function HoverVideo({ videoSrc, className, onDuration }) {
   return (
     <div className="hover-video-wrap" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
       {error && <div className="bento-media-fallback"><FiFilm /></div>}
-      <video ref={videoRef} src={videoSrc} muted loop playsInline preload="metadata" className={className} />
+      <video ref={videoRef} src={videoSrc} muted loop playsInline preload="none" className={className} poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'%3E%3C/svg%3E" />
     </div>
   );
 }

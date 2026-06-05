@@ -21,8 +21,8 @@ export function Hero() {
       <div className="relative mx-auto grid max-w-7xl items-center gap-8 lg:grid-cols-[1.03fr_.97fr]">
         <div className="relative z-10">
           <motion.div
-            initial={{ opacity: 0, y: 26, filter: 'blur(12px)' }}
-            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+            initial={{ opacity: 0, y: 26 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 2.55, duration: 0.8 }}
             className="mb-5 inline-flex items-center gap-2 rounded-full border border-line bg-white/[0.05] px-3 py-2 text-xs uppercase tracking-[0.22em] text-cyan backdrop-blur"
           >
@@ -58,8 +58,8 @@ export function Hero() {
           </div>
           <motion.div
             className="software-dock mt-8"
-            initial={{ opacity: 0, y: 24, filter: 'blur(12px)' }}
-            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 3.2, duration: 0.85, ease: 'easeOut' }}
           >
             {softwareStack.map((tool, index) => (
@@ -69,7 +69,10 @@ export function Hero() {
                 whileHover={{ y: -8, rotateX: 6, rotateY: index === 1 ? 0 : index === 0 ? -5 : 5, scale: 1.04 }}
                 transition={{ type: 'spring', stiffness: 260, damping: 18 }}
               >
-                <img src={tool.file} alt={`${tool.name} neon 3D icon`} loading="eager" />
+                <picture>
+                  <source srcSet={`${tool.file.replace('.png', '.webp')} 1x, ${tool.file.replace('.png', '@2x.webp')} 2x`} type="image/webp" />
+                  <img src={tool.file} alt={`${tool.name} neon 3D icon`} loading="eager" decoding="async" />
+                </picture>
                 <div>
                   <strong>{tool.name}</strong>
                   <span>{tool.meta}</span>

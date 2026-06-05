@@ -1,5 +1,4 @@
-﻿@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap');
-@tailwind base;
+﻿@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -78,6 +77,8 @@ a {
 .section-pad {
   position: relative;
   padding: 6.5rem 1rem;
+  content-visibility: auto;
+  contain-intrinsic-size: 800px;
 }
 
 .panel-shell {
@@ -442,18 +443,19 @@ a {
 .model-slider-thumb {
   position: absolute;
   top: 50%;
+  left: 0;
   width: 40%;
   height: 3px;
   background: linear-gradient(90deg, #9b5cff, #24e8ff);
   border-radius: 999px;
-  transform: translateY(-50%);
   box-shadow: 0 0 12px rgba(36, 232, 255, 0.3);
+  will-change: transform;
   animation: sliderSweep 4s ease-in-out infinite;
 }
 
 @keyframes sliderSweep {
-  0%, 100% { left: 0; }
-  50% { left: 60%; }
+  0%, 100% { transform: translateY(-50%) translateX(0); }
+  50% { transform: translateY(-50%) translateX(150%); }
 }
 
 .skill-card {
