@@ -6,15 +6,26 @@ import { portfolio } from '../data/profile.js';
 
 const categories = ['All', 'Cinematic Videos', 'Motion Graphics'];
 
-function formatDuration(seconds) {
-  if (!seconds || !isFinite(seconds)) return '00:00';
+function parseSeconds(value) {
+  if (typeof value === 'number' && isFinite(value)) return value;
+  if (typeof value === 'string' && /^\d{1,2}:\d{2}$/.test(value)) {
+    const [m, s] = value.split(':').map(Number);
+    return m * 60 + s;
+  }
+  return NaN;
+}
+
+function formatDuration(value) {
+  const seconds = parseSeconds(value);
+  if (!isFinite(seconds)) return '00:00';
   const m = Math.floor(seconds / 60);
   const s = Math.floor(seconds % 60);
   return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
 }
 
-function formatTimecode(seconds) {
-  if (!seconds || !isFinite(seconds)) return '00:00:00:00';
+function formatTimecode(value) {
+  const seconds = parseSeconds(value);
+  if (!isFinite(seconds)) return '00:00:00:00';
   const h = Math.floor(seconds / 3600);
   const m = Math.floor((seconds % 3600) / 60);
   const s = Math.floor(seconds % 60);
@@ -26,28 +37,34 @@ function HoverVideo({ videoSrc, className, onDuration }) {
   const [error, setError] = useState(false);
   const videoRef = useRef(null);
   const hoveringRef = useRef(false);
+  const onDurationRef = useRef(onDuration);
+  onDurationRef.current = onDuration;
 
   useEffect(() => {
     const el = videoRef.current;
     if (!el) return;
     setError(false);
 
-    const seekToFirst = () => { if (el && !hoveringRef.current) el.currentTime = 0.1; };
+    const handleError = () => setError(true);
+
+    const trySeek = (t) => { try { if (el) el.currentTime = t; } catch {} };
+
+    const seekToFirst = () => { if (!hoveringRef.current) trySeek(0.1); };
 
     const onMeta = () => {
-      if (onDuration) onDuration(el.duration);
+      if (onDurationRef.current) onDurationRef.current(el.duration);
       seekToFirst();
     };
 
     if (el.readyState >= 1) onMeta();
     el.addEventListener('loadedmetadata', onMeta);
-    el.addEventListener('error', () => setError(true));
+    el.addEventListener('error', handleError);
 
     return () => {
       el.removeEventListener('loadedmetadata', onMeta);
-      el.removeEventListener('error', () => setError(true));
+      el.removeEventListener('error', handleError);
     };
-  }, [videoSrc, onDuration]);
+  }, [videoSrc]);
 
   const handleMouseEnter = () => {
     hoveringRef.current = true;
@@ -58,13 +75,13 @@ function HoverVideo({ videoSrc, className, onDuration }) {
   const handleMouseLeave = () => {
     hoveringRef.current = false;
     const el = videoRef.current;
-    if (el) { el.pause(); el.currentTime = 0.1; }
+    if (el) { try { el.pause(); } catch {} try { el.currentTime = 0.1; } catch {} }
   };
 
   return (
     <div className="hover-video-wrap" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
       {error && <div className="bento-media-fallback"><FiFilm /></div>}
-      <video ref={videoRef} src={videoSrc} muted loop playsInline preload="none" className={className} poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'%3E%3C/svg%3E" />
+      <video ref={videoRef} src={videoSrc} muted loop playsInline preload="metadata" className={className} />
     </div>
   );
 }
@@ -109,7 +126,7 @@ function BentoPreview({ item, onOpen, onDuration }) {
   );
 }
 
-function BentolClip({ item, index, onOpen, onDuration }) {
+function BentoClip({ item, index, onOpen, onDuration }) {
   const [hovering, setHovering] = useState(false);
 
   return (
@@ -168,7 +185,7 @@ export function Portfolio() {
   }, []);
 
   return (
-    <section id="portfolio" className="section-pad overflow-hidden">
+    <section id="portfolio" aria-label="Portfolio" className="section-pad overflow-hidden">
       <SectionHeader kicker="Sequence 01" title="Portfolio timeline">
         Bento grid of video projects inspired by After Effects. Hover any clip to preview, click for full view.
       </SectionHeader>
@@ -189,11 +206,11 @@ export function Portfolio() {
           <BentoPreview item={portfolioWithDuration[0]} onOpen={setSelected} onDuration={handleDuration} />
 
           <div className="bento-grid-inner">
-            {portfolioWithDuration.map((item, index) => (
-              <BentolClip
+            {portfolioWithDuration.slice(1).map((item, index) => (
+              <BentoClip
                 key={item.id}
                 item={item}
-                index={index}
+                index={index + 1}
                 onOpen={setSelected}
                 onDuration={handleDuration}
               />

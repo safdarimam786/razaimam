@@ -81,6 +81,6 @@ export const portfolio = [
 ].map((item, index) => ({
   id: `video-${index}`,
   ...item,
-  videoSrc: `${cloudBase}/video/upload/q_auto/f_auto/${item.file}`,
+  videoSrc: `${cloudBase}/video/upload/q_auto/${item.file}`,
   color: colors[index % colors.length],
 }));

@@ -15,7 +15,7 @@ import { ScrollProgress } from './components/ScrollProgress.jsx';
 import { useLenis } from './hooks/useLenis.js';
 import { useScrollAnimations } from './animations/useScrollAnimations.js';
 
-const Portfolio = lazy(() => import('./sections/Portfolio.jsx'));
+const Portfolio = lazy(() => import('./sections/Portfolio.jsx').then(m => ({ default: m.Portfolio })));
 
 const backgroundVideo =
   'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260508_064122_c4750c0e-7476-4b44-94a2-a85a65c63bf2.mp4';
