@@ -1,6 +1,6 @@
-﻿import React, { useMemo, useState, useRef, useEffect, useCallback } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
-import { FiPlay, FiX, FiFilm, FiClock } from 'react-icons/fi';
+﻿import React, { useMemo, useState, useCallback, useRef, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { FiPlay, FiFilm, FiClock } from 'react-icons/fi';
 import { SectionHeader } from '../components/SectionHeader.jsx';
 import { portfolio } from '../data/profile.js';
 
@@ -162,10 +162,12 @@ function BentoClip({ item, index, onOpen, onDuration }) {
 
 export function Portfolio() {
   const [active, setActive] = useState('All');
-  const [selected, setSelected] = useState(null);
   const [durations, setDurations] = useState({});
 
-  const videoRef = useRef(null);
+  const openVideo = useCallback((item) => {
+    const url = '/video-player.html?src=' + encodeURIComponent(item.videoSrc);
+    window.open(url, '_blank');
+  }, []);
 
   const filtered = useMemo(
     () => (active === 'All' ? portfolio : portfolio.filter((item) => item.category === active)),
@@ -194,7 +196,7 @@ export function Portfolio() {
           {categories.map((category) => (
             <button
               key={category}
-              onClick={() => { setActive(category); setSelected(null); }}
+              onClick={() => setActive(category)}
               className={`category-pill ${active === category ? 'active' : ''}`}
             >
               {category}
@@ -203,7 +205,7 @@ export function Portfolio() {
         </div>
 
         <div className="bento-grid">
-          <BentoPreview item={portfolioWithDuration[0]} onOpen={setSelected} onDuration={handleDuration} />
+          <BentoPreview item={portfolioWithDuration[0]} onOpen={openVideo} onDuration={handleDuration} />
 
           <div className="bento-grid-inner">
             {portfolioWithDuration.slice(1).map((item, index) => (
@@ -211,50 +213,13 @@ export function Portfolio() {
                 key={item.id}
                 item={item}
                 index={index + 1}
-                onOpen={setSelected}
+                onOpen={openVideo}
                 onDuration={handleDuration}
               />
             ))}
           </div>
         </div>
       </div>
-
-      <AnimatePresence>
-        {selected && (
-          <motion.div
-            className="fixed inset-0 z-[80] flex items-center justify-center bg-black p-0"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setSelected(null)}
-          >
-            <motion.div
-              key={selected.id}
-              className="relative flex h-full w-full items-center justify-center"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <button
-                className="absolute right-4 top-4 z-10 grid h-10 w-10 place-items-center rounded-full bg-white/10 text-white backdrop-blur-sm hover:bg-white/20"
-                onClick={() => setSelected(null)}
-                aria-label="Close video"
-              >
-                <FiX size={20} />
-              </button>
-              <video
-                ref={videoRef}
-                src={selected.videoSrc}
-                className="max-h-full max-w-full"
-                controls
-                autoPlay
-                playsInline
-              />
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </section>
   );
 }
