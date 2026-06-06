@@ -23,7 +23,7 @@ export function Hero() {
           <motion.div
             initial={{ opacity: 0, y: 26 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 2.55, duration: 0.8 }}
+            transition={{ delay: 0.6, duration: 0.7 }}
             className="mb-5 inline-flex items-center gap-2 rounded-full border border-line bg-white/[0.05] px-3 py-2 text-xs uppercase tracking-[0.22em] text-cyan backdrop-blur"
           >
             <FiActivity />
@@ -32,7 +32,7 @@ export function Hero() {
           <motion.h1
             initial={{ opacity: 0, y: 36 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 2.75, duration: 0.9, ease: 'easeOut' }}
+            transition={{ delay: 0.75, duration: 0.8, ease: 'easeOut' }}
             className="split-title font-display text-[clamp(3.6rem,11vw,10rem)] font-black uppercase leading-[0.82] text-white"
           >
             Raza
@@ -41,7 +41,7 @@ export function Hero() {
           <motion.p
             initial={{ opacity: 0, y: 28 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 3.0, duration: 0.8 }}
+            transition={{ delay: 0.9, duration: 0.7 }}
             className="mt-7 max-w-2xl text-base leading-8 text-slate-300 md:text-xl"
           >
             {profile.role}. Cinematic edits, reels, motion graphics, color grading, and story-first social content from Ghaziabad.
@@ -60,7 +60,7 @@ export function Hero() {
             className="software-dock mt-8"
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 3.2, duration: 0.85, ease: 'easeOut' }}
+            transition={{ delay: 1.0, duration: 0.75, ease: 'easeOut' }}
           >
             {softwareStack.map((tool, index) => (
               <motion.div

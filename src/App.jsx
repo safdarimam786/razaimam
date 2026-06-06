@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState, Suspense, lazy } from 'react';
+﻿import React, { useEffect, useRef, useState, Suspense, lazy } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { About } from './sections/About.jsx';
 import { Contact } from './sections/Contact.jsx';
@@ -22,18 +22,42 @@ const backgroundVideo =
 
 export default function App() {
   const [loading, setLoading] = useState(true);
+  const videoRef = useRef(null);
   useLenis();
   useScrollAnimations();
 
   useEffect(() => {
-    const timer = window.setTimeout(() => setLoading(false), 1500);
+    const timer = window.setTimeout(() => setLoading(false), 600);
     return () => window.clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const hero = document.getElementById('hero');
+    if (!hero) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          video.play().catch(() => {});
+        } else {
+          video.pause();
+        }
+      },
+      { threshold: 0 }
+    );
+
+    observer.observe(hero);
+    return () => observer.disconnect();
   }, []);
 
   return (
     <main className="relative min-h-screen overflow-x-hidden bg-[#0c0c0c] text-white selection:bg-cyan/30">
       <div className="pointer-events-none fixed inset-0 z-0">
         <video
+          ref={videoRef}
           className="pointer-events-none h-full w-full object-cover"
           autoPlay
           loop

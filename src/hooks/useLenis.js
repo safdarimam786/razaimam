@@ -1,5 +1,6 @@
 ﻿import { useEffect, useRef } from 'react';
 import Lenis from 'lenis';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 export function useLenis() {
   const rafRef = useRef(null);
@@ -9,21 +10,22 @@ export function useLenis() {
       navigator.hardwareConcurrency <= 4;
 
     const lenis = new Lenis({
-      duration: isLowDevice ? 1.8 : 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      duration: isLowDevice ? 2.0 : 1.6,
+      easing: (t) => 1 - Math.pow(1 - t, 3),
       orientation: 'vertical',
       gestureOrientation: 'vertical',
       smoothWheel: true,
       smoothTouch: true,
-      wheelMultiplier: isLowDevice ? 0.4 : 1,
-      touchMultiplier: isLowDevice ? 0.4 : 1.2,
-      lerp: 0.1,
+      wheelMultiplier: isLowDevice ? 0.5 : 0.8,
+      touchMultiplier: isLowDevice ? 0.5 : 1,
+      lerp: isLowDevice ? 0.08 : 0.05,
       syncTouch: true,
-      syncTouchLerp: isLowDevice ? 0.08 : 0.075,
+      syncTouchLerp: isLowDevice ? 0.08 : 0.05,
       infinite: false,
     });
 
     window.lenis = lenis;
+    lenis.on('scroll', ScrollTrigger.update);
 
     function raf(time) {
       lenis.raf(time);
@@ -31,7 +33,10 @@ export function useLenis() {
     }
     rafRef.current = requestAnimationFrame(raf);
 
-    const handleResize = () => lenis.resize();
+    const handleResize = () => {
+      lenis.resize();
+      ScrollTrigger.refresh();
+    };
     window.addEventListener('resize', handleResize);
 
     return () => {
