@@ -1,8 +1,19 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import { FiChevronDown } from 'react-icons/fi';
 import { Panel } from '../components/Panel.jsx';
 import { SectionHeader } from '../components/SectionHeader.jsx';
 import { skills } from '../data/profile.js';
+
+const skillVariants = {
+  hidden: { opacity: 0, y: 50, filter: 'blur(6px)' },
+  visible: (i) => ({
+    opacity: 1,
+    y: 0,
+    filter: 'blur(0px)',
+    transition: { delay: i * 0.08, duration: 0.6, ease: 'easeOut' }
+  })
+};
 
 export function Skills() {
   return (
@@ -10,7 +21,16 @@ export function Skills() {
       <SectionHeader kicker="Effect Controls" title="Tools, effects, and edit muscle" />
       <div className="mx-auto grid max-w-7xl gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {skills.map(([skill, value], index) => (
-          <Panel key={skill} title={`Layer ${String(index + 1).padStart(2, '0')}`} className="skill-card p-4" data-reveal>
+          <motion.div
+            key={skill}
+            custom={index}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-30px' }}
+            variants={skillVariants}
+            whileHover={{ y: -6, scale: 1.02, transition: { duration: 0.25 } }}
+          >
+            <Panel title={`Layer ${String(index + 1).padStart(2, '0')}`} className="skill-card p-4">
             <div className="mb-5 flex items-start justify-between gap-3">
               <h3 className="font-display text-lg font-bold text-white">{skill}</h3>
               <FiChevronDown className="mt-1 text-cyan transition group-hover:rotate-180" />
@@ -23,8 +43,9 @@ export function Skills() {
               <span className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-premiere via-after to-cyan" style={{ width: `${value}%` }} />
               <span className="absolute inset-0 bg-[linear-gradient(90deg,transparent_0_12px,rgba(0,0,0,.35)_12px_14px)] bg-[length:18px_100%]" />
             </div>
-          </Panel>
-        ))}
+            </Panel>
+            </motion.div>
+          ))}
       </div>
     </section>
   );

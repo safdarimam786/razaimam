@@ -527,7 +527,7 @@ a {
   padding: 1rem;
 }
 
-[data-reveal] { will-change: transform, opacity; }
+[data-reveal] { will-change: transform, opacity, filter; }
 [data-parallax] { will-change: transform; }
 
 .preview-screen {

@@ -10,17 +10,17 @@ export function useLenis() {
       navigator.hardwareConcurrency <= 4;
 
     const lenis = new Lenis({
-      duration: isLowDevice ? 2.0 : 1.6,
-      easing: (t) => 1 - Math.pow(1 - t, 3),
+      duration: isLowDevice ? 2.4 : 2.0,
+      easing: (t) => 1 - Math.pow(1 - t, 5),
       orientation: 'vertical',
       gestureOrientation: 'vertical',
       smoothWheel: true,
       smoothTouch: true,
-      wheelMultiplier: isLowDevice ? 0.5 : 0.8,
-      touchMultiplier: isLowDevice ? 0.5 : 1,
-      lerp: isLowDevice ? 0.08 : 0.05,
+      wheelMultiplier: isLowDevice ? 0.35 : 0.5,
+      touchMultiplier: isLowDevice ? 0.35 : 0.7,
+      lerp: isLowDevice ? 0.05 : 0.025,
       syncTouch: true,
-      syncTouchLerp: isLowDevice ? 0.08 : 0.05,
+      syncTouchLerp: isLowDevice ? 0.05 : 0.035,
       infinite: false,
     });
 

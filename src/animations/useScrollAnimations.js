@@ -10,15 +10,16 @@ export function useScrollAnimations() {
       gsap.utils.toArray('[data-reveal]').forEach((element) => {
         gsap.fromTo(
           element,
-          { autoAlpha: 0, y: 42 },
+          { autoAlpha: 0, y: 48, filter: 'blur(10px)' },
           {
             autoAlpha: 1,
             y: 0,
-            duration: 0.95,
-            ease: 'power3.out',
+            filter: 'blur(0px)',
+            duration: 1.1,
+            ease: 'power2.out',
             scrollTrigger: {
               trigger: element,
-              start: 'top 82%'
+              start: 'top 85%'
             }
           }
         );

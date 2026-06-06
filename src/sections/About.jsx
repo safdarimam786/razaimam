@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import { FiMapPin, FiMonitor, FiUserCheck } from 'react-icons/fi';
 import { Panel } from '../components/Panel.jsx';
 import { SectionHeader } from '../components/SectionHeader.jsx';
@@ -11,7 +12,13 @@ export function About() {
         {profile.summary}
       </SectionHeader>
       <div className="mx-auto grid max-w-7xl gap-5 lg:grid-cols-[1.15fr_.85fr]">
-        <Panel title="Editor Profile" className="p-5 md:p-7" data-reveal>
+        <motion.div
+          initial={{ opacity: 0, x: -60, filter: 'blur(8px)' }}
+          whileInView={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
+          viewport={{ once: true, margin: '-50px' }}
+          transition={{ duration: 0.7, ease: 'easeOut' }}
+        >
+          <Panel title="Editor Profile" className="p-5 md:p-7">
           <div className="grid gap-5 md:grid-cols-3">
             {[
               ['Experience', profile.experience.duration, profile.experience.period],
@@ -35,8 +42,15 @@ export function About() {
             </p>
           </div>
         </Panel>
+        </motion.div>
 
-        <Panel title="Creative Strengths" className="p-5 md:p-7" data-reveal>
+        <motion.div
+          initial={{ opacity: 0, x: 60, filter: 'blur(8px)' }}
+          whileInView={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
+          viewport={{ once: true, margin: '-50px' }}
+          transition={{ duration: 0.7, ease: 'easeOut', delay: 0.15 }}
+        >
+          <Panel title="Creative Strengths" className="p-5 md:p-7">
           <div className="mb-6 flex items-center gap-3 rounded-xl border border-line bg-cyan/10 p-4 text-cyan">
             <FiMapPin />
             <span className="text-sm">{profile.location}</span>
@@ -51,6 +65,7 @@ export function About() {
             ))}
           </div>
         </Panel>
+        </motion.div>
       </div>
     </section>
   );

@@ -3,6 +3,16 @@ import { motion } from 'framer-motion';
 import { SectionHeader } from '../components/SectionHeader.jsx';
 import { services } from '../data/profile.js';
 
+const serviceVariants = {
+  hidden: { opacity: 0, y: 50, filter: 'blur(8px)' },
+  visible: (i) => ({
+    opacity: 1,
+    y: 0,
+    filter: 'blur(0px)',
+    transition: { delay: i * 0.1, duration: 0.65, ease: 'easeOut' }
+  })
+};
+
 export function Services() {
   return (
     <section id="services" className="section-pad">
@@ -12,9 +22,12 @@ export function Services() {
           <motion.div
             key={title}
             className="service-card"
-            data-reveal
-            whileHover={{ y: -8, rotateX: 4, rotateY: -4 }}
-            transition={{ type: 'spring', stiffness: 220, damping: 18 }}
+            custom={index}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-30px' }}
+            variants={serviceVariants}
+            whileHover={{ y: -8, rotateX: 4, rotateY: -4, transition: { duration: 0.3 } }}
           >
             <div className="mb-7 flex items-center justify-between">
               <span className="grid h-12 w-12 place-items-center rounded-xl bg-cyan/10 text-2xl text-cyan">
