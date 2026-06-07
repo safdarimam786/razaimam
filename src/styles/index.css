@@ -15,7 +15,9 @@ html {
   scroll-behavior: auto;
   overscroll-behavior: none;
   scrollbar-gutter: stable;
+  scroll-padding-top: 80px;
 }
+
 
 html.lenis { scroll-behavior: auto; }
 .lenis.lenis-smooth { scroll-behavior: auto; }
@@ -32,6 +34,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-overflow-scrolling: touch;
+  will-change: scroll-position;
 }
 
 button, a, select, input, textarea {
@@ -244,6 +247,8 @@ a {
   transform-style: preserve-3d;
   animation: orbitFloat 7s ease-in-out infinite;
   will-change: transform;
+  backface-visibility: hidden;
+  transform: translate3d(0, 0, 0);
 }
 
 .orb-ring,

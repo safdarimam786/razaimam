@@ -16,7 +16,7 @@ export function ScrollProgress() {
     };
 
     const animate = () => {
-      current += (target - current) * 0.15;
+      current += (target - current) * 0.18;
       updateTransform();
       if (Math.abs(current - target) > 0.0001) {
         rafId = requestAnimationFrame(animate);

@@ -1,4 +1,4 @@
-﻿import React from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { FiActivity, FiCpu, FiPlay, FiScissors } from 'react-icons/fi';
 import { Panel } from '../components/Panel.jsx';
@@ -13,6 +13,13 @@ const softwareStack = [
 ];
 
 export function Hero() {
+  const [highPerf, setHighPerf] = useState(true);
+
+  useEffect(() => {
+    const perf = window.__RI_PERF || {};
+    setHighPerf(Boolean(perf.highPerf));
+  }, []);
+
   return (
     <section id="hero" className="relative min-h-screen overflow-hidden px-4 pb-20 pt-32 md:pt-36">
       <div className="absolute inset-0 bg-grid bg-[length:64px_64px] opacity-35" />
@@ -81,7 +88,7 @@ export function Hero() {
           </motion.div>
         </div>
 
-        <div className="relative z-10 grid gap-4 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-1" data-parallax="-7">
+        <div className="relative z-10 grid gap-4 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-1" {...(highPerf ? { 'data-parallax': '-7' } : {})}>
           <div className="hero-panels-right grid gap-4">
             <Panel title="Effect Controls" className="p-4">
               <div className="mb-5 flex items-center justify-between">

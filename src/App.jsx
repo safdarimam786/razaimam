@@ -34,25 +34,31 @@ export default function App() {
 
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const isLowCpu = navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4;
+    const cpuCount = navigator.hardwareConcurrency || 8;
+    const isLowCpu = cpuCount <= 6;
     const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || window.matchMedia('(pointer: coarse)').matches;
     const connectionType = navigator.connection?.effectiveType || '';
     const isSlowConnection = /(2g|slow-2g|3g)/.test(connectionType);
-    const shouldUseVideo = !prefersReducedMotion && !isLowCpu && !isTouchDevice && !isSlowConnection && window.innerWidth >= 1024;
+    const memoryInfo = navigator.deviceMemory || 8;
+    const isLowMemory = memoryInfo <= 4;
+    const shouldUseVideo = !prefersReducedMotion && !isLowCpu && !isTouchDevice && !isSlowConnection && !isLowMemory && window.innerWidth >= 1024;
 
     setEnableVideoBackground(shouldUseVideo);
   }, []);
 
   useEffect(() => {
     const isReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const isLowCpu = navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4;
+    const cpuCount = navigator.hardwareConcurrency || 8;
+    const isLowCpu = cpuCount <= 6;
     const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || window.matchMedia('(pointer: coarse)').matches;
     const connectionType = navigator.connection?.effectiveType || '';
     const isSlowConnection = /(2g|slow-2g|3g)/.test(connectionType);
+    const memoryInfo = navigator.deviceMemory || 8;
+    const isLowMemory = memoryInfo <= 4;
     const supportsHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
-    const highPerf = !isReducedMotion && !isLowCpu && !isTouchDevice && !isSlowConnection;
-    const disableAnimations = isReducedMotion || isLowCpu || isSlowConnection;
+    const highPerf = !isReducedMotion && !isLowCpu && !isTouchDevice && !isSlowConnection && !isLowMemory;
+    const disableAnimations = isReducedMotion || isLowCpu || isSlowConnection || isLowMemory;
 
     window.__RI_PERF = { highPerf, supportsHover, disableAnimations };
   }, [enableVideoBackground]);

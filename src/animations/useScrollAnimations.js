@@ -6,9 +6,17 @@ gsap.registerPlugin(ScrollTrigger);
 
 export function useScrollAnimations() {
   useEffect(() => {
-    const isLowCpu = navigator.hardwareConcurrency ? navigator.hardwareConcurrency <= 4 : false;
+    const cpuCount = navigator.hardwareConcurrency || 8;
+    const isLowCpu = cpuCount <= 6;
     const connectionType = navigator.connection?.effectiveType || '';
     const isSlowConnection = /(2g|slow-2g|3g)/.test(connectionType);
+    const memoryInfo = navigator.deviceMemory || 8;
+    const isLowMemory = memoryInfo <= 4;
+
+    if (isLowCpu || isSlowConnection || isLowMemory) {
+      window.__RI_ANIMATIONS_DISABLED = true;
+      return;
+    }
 
     const context = gsap.context(() => {
       ScrollTrigger.matchMedia({
