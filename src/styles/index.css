@@ -13,7 +13,13 @@
 
 html {
   scroll-behavior: auto;
+  overscroll-behavior: none;
+  scrollbar-gutter: stable;
 }
+
+html.lenis { scroll-behavior: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
 
 body {
   margin: 0;
@@ -25,6 +31,11 @@ body {
   font-family: Inter, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  -webkit-overflow-scrolling: touch;
+}
+
+button, a, select, input, textarea {
+  touch-action: manipulation;
 }
 
 #hero, #about, #portfolio, #services, #workflow, #contact, #skills {

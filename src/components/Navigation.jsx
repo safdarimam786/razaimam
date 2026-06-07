@@ -15,7 +15,7 @@ function scrollToSection(event, href) {
   if (!target) return;
 
   if (window.lenis) {
-    window.lenis.scrollTo(target);
+    window.lenis.scrollTo(target, { offset: -80, duration: 1.4, easing: (t) => 1 - Math.pow(1 - t, 3) });
     return;
   }
 

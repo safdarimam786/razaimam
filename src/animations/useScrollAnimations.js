@@ -6,16 +6,19 @@ gsap.registerPlugin(ScrollTrigger);
 
 export function useScrollAnimations() {
   useEffect(() => {
+    const isLowDevice = navigator.hardwareConcurrency <= 4;
+    const blurAmount = isLowDevice ? 4 : 6;
+
     const context = gsap.context(() => {
       gsap.utils.toArray('[data-reveal]').forEach((element) => {
         gsap.fromTo(
           element,
-          { autoAlpha: 0, y: 48, filter: 'blur(10px)' },
+          { autoAlpha: 0, y: 48, filter: `blur(${blurAmount}px)` },
           {
             autoAlpha: 1,
             y: 0,
             filter: 'blur(0px)',
-            duration: 1.1,
+            duration: 0.9,
             ease: 'power2.out',
             scrollTrigger: {
               trigger: element,
@@ -31,7 +34,7 @@ export function useScrollAnimations() {
           ease: 'none',
           scrollTrigger: {
             trigger: element,
-            scrub: true
+            scrub: 1
           }
         });
       });
@@ -44,7 +47,7 @@ export function useScrollAnimations() {
           trigger: '#workflow',
           start: 'top 65%',
           end: 'bottom 70%',
-          scrub: true
+          scrub: 1.5
         }
       });
     });

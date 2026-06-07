@@ -6,21 +6,23 @@ export function useLenis() {
   const rafRef = useRef(null);
 
   useEffect(() => {
-    const isLowDevice = window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
-      navigator.hardwareConcurrency <= 4;
+    const isReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const isLowCpu = navigator.hardwareConcurrency <= 4;
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    const isLowDevice = isReducedMotion || isLowCpu;
 
     const lenis = new Lenis({
-      duration: isLowDevice ? 2.4 : 2.0,
-      easing: (t) => 1 - Math.pow(1 - t, 5),
+      duration: isLowDevice ? 1.0 : 1.2,
+      easing: (t) => 1 - Math.pow(1 - t, 3),
       orientation: 'vertical',
       gestureOrientation: 'vertical',
       smoothWheel: true,
       smoothTouch: true,
-      wheelMultiplier: isLowDevice ? 0.35 : 0.5,
-      touchMultiplier: isLowDevice ? 0.35 : 0.7,
-      lerp: isLowDevice ? 0.05 : 0.025,
+      wheelMultiplier: 1.0,
+      touchMultiplier: isTouchDevice ? 1.0 : 0.8,
+      lerp: isLowDevice ? 0.06 : 0.04,
       syncTouch: true,
-      syncTouchLerp: isLowDevice ? 0.05 : 0.035,
+      syncTouchLerp: isLowDevice ? 0.08 : 0.05,
       infinite: false,
     });
 
@@ -33,15 +35,29 @@ export function useLenis() {
     }
     rafRef.current = requestAnimationFrame(raf);
 
+    let resizeTimer;
     const handleResize = () => {
-      lenis.resize();
-      ScrollTrigger.refresh();
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        lenis.resize();
+        ScrollTrigger.refresh();
+      }, 150);
     };
     window.addEventListener('resize', handleResize);
 
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const handleMotionChange = () => {
+      lenis.destroy();
+      ScrollTrigger.refresh();
+      window.lenis = null;
+    };
+    prefersReducedMotion.addEventListener('change', handleMotionChange);
+
     return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      clearTimeout(resizeTimer);
       window.removeEventListener('resize', handleResize);
+      prefersReducedMotion.removeEventListener('change', handleMotionChange);
       window.lenis = null;
       lenis.destroy();
     };
