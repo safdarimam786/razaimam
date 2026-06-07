@@ -5,43 +5,53 @@ export function ScrollProgress() {
 
   useEffect(() => {
     const lenis = window.lenis;
-    if (!lenis) return;
-
     let current = 0;
     let target = 0;
     let rafId;
 
-    const onScroll = (e) => {
-      const limit = e.limit || document.documentElement.scrollHeight - window.innerHeight;
-      target = limit > 0 ? e.scroll / limit : 0;
+    const updateTransform = () => {
+      if (barRef.current) {
+        barRef.current.style.transform = `translateX(${(current - 1) * 100}%)`;
+      }
     };
 
     const animate = () => {
       current += (target - current) * 0.15;
-      if (barRef.current) {
-        barRef.current.style.transform = `translateX(${(current - 1) * 100}%)`;
-      }
+      updateTransform();
       if (Math.abs(current - target) > 0.0001) {
         rafId = requestAnimationFrame(animate);
       }
     };
 
-    const onScrollEnd = () => {
-      if (rafId) cancelAnimationFrame(rafId);
-      current = target;
-      if (barRef.current) {
-        barRef.current.style.transform = `translateX(${(target - 1) * 100}%)`;
-      }
+    const onScrollEvent = (scroll, limit) => {
+      target = limit > 0 ? scroll / limit : 0;
+      if (!rafId) rafId = requestAnimationFrame(animate);
     };
 
-    lenis.on('scroll', onScroll);
-    lenis.on('scroll', () => {
-      if (!rafId) rafId = requestAnimationFrame(animate);
-    });
-    onScroll({ scroll: lenis.scroll, limit: lenis.limit });
+    const handleLenisScroll = (e) => {
+      const limit = e.limit || document.documentElement.scrollHeight - window.innerHeight;
+      onScrollEvent(e.scroll, limit);
+    };
+
+    const handleNativeScroll = () => {
+      const limit = document.documentElement.scrollHeight - window.innerHeight;
+      onScrollEvent(window.scrollY, limit);
+    };
+
+    if (lenis) {
+      lenis.on('scroll', handleLenisScroll);
+      handleLenisScroll({ scroll: lenis.scroll, limit: lenis.limit });
+    } else {
+      window.addEventListener('scroll', handleNativeScroll, { passive: true });
+      handleNativeScroll();
+    }
 
     return () => {
-      lenis.off('scroll', onScroll);
+      if (lenis) {
+        lenis.off('scroll', handleLenisScroll);
+      } else {
+        window.removeEventListener('scroll', handleNativeScroll);
+      }
       if (rafId) cancelAnimationFrame(rafId);
     };
   }, []);

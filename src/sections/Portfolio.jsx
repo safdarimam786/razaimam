@@ -33,8 +33,9 @@ function formatTimecode(value) {
   return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}:${String(f).padStart(2, '0')}`;
 }
 
-function HoverVideo({ videoSrc, className, onDuration }) {
+function HoverVideo({ videoSrc, className, onDuration, supportsHover }) {
   const [error, setError] = useState(false);
+  const [activeSrc, setActiveSrc] = useState('');
   const videoRef = useRef(null);
   const hoveringRef = useRef(false);
   const onDurationRef = useRef(onDuration);
@@ -42,60 +43,73 @@ function HoverVideo({ videoSrc, className, onDuration }) {
 
   useEffect(() => {
     const el = videoRef.current;
-    if (!el) return;
+    if (!el || !activeSrc) return;
     setError(false);
 
     const handleError = () => setError(true);
-
-    const trySeek = (t) => { try { if (el) el.currentTime = t; } catch {} };
-
-    const seekToFirst = () => { if (!hoveringRef.current) trySeek(0.1); };
-
-    const onMeta = () => {
+    const handleLoadedMeta = () => {
       if (onDurationRef.current) onDurationRef.current(el.duration);
-      seekToFirst();
     };
 
-    if (el.readyState >= 1) onMeta();
-    el.addEventListener('loadedmetadata', onMeta);
+    el.addEventListener('loadedmetadata', handleLoadedMeta);
     el.addEventListener('error', handleError);
 
+    if (el.readyState >= 1) handleLoadedMeta();
+
     return () => {
-      el.removeEventListener('loadedmetadata', onMeta);
+      el.removeEventListener('loadedmetadata', handleLoadedMeta);
       el.removeEventListener('error', handleError);
     };
-  }, [videoSrc]);
+  }, [activeSrc]);
 
   const handleMouseEnter = () => {
+    if (!supportsHover) return;
     hoveringRef.current = true;
+    if (!activeSrc) setActiveSrc(videoSrc);
     const el = videoRef.current;
-    if (el) el.play().catch(() => {});
+    if (el && el.readyState >= 3) el.play().catch(() => {});
   };
 
   const handleMouseLeave = () => {
     hoveringRef.current = false;
     const el = videoRef.current;
-    if (el) { try { el.pause(); } catch {} try { el.currentTime = 0.1; } catch {} }
+    if (el) {
+      try { el.pause(); } catch {}
+      try { el.currentTime = 0.1; } catch {}
+    }
   };
+
+  const shouldShowVideo = supportsHover && activeSrc && !error;
 
   return (
     <div className="hover-video-wrap" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-      {error && <div className="bento-media-fallback"><FiFilm /></div>}
-      <video ref={videoRef} src={videoSrc} muted loop playsInline preload="metadata" className={className} />
+      {shouldShowVideo ? (
+        <video
+          ref={videoRef}
+          src={activeSrc}
+          muted
+          loop
+          playsInline
+          preload="none"
+          className={className}
+          onCanPlay={() => {
+            if (hoveringRef.current && videoRef.current) {
+              videoRef.current.play().catch(() => {});
+            }
+          }}
+        />
+      ) : (
+        <div className="bento-media-fallback"><FiFilm /></div>
+      )}
     </div>
   );
 }
 
-function BentoPreview({ item, onOpen, onDuration }) {
+function BentoPreview({ item, onOpen, onDuration, supportsHover, disableAnimations }) {
   if (!item) return null;
-  return (
-    <motion.div
-      className="bento-preview"
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.25 }}
-      transition={{ duration: 0.6, ease: 'easeOut' }}
-    >
+
+  const content = (
+    <>
       <div className="bento-preview-titlebar">
         <div className="flex items-center gap-2">
           <span className="h-2.5 w-2.5 rounded-full bg-rose-400" />
@@ -106,7 +120,12 @@ function BentoPreview({ item, onOpen, onDuration }) {
         <span className="bento-preview-time">{formatTimecode(item.duration)}</span>
       </div>
       <div className="bento-preview-body" onClick={() => onOpen(item)} role="button" tabIndex={0} onKeyDown={(e) => e.key === 'Enter' && onOpen(item)}>
-        <HoverVideo videoSrc={item.videoSrc} className="bento-preview-img" onDuration={(d) => onDuration(item.id, d)} />
+        <HoverVideo
+          videoSrc={item.videoSrc}
+          className="bento-preview-img"
+          onDuration={(d) => onDuration(item.id, d)}
+          supportsHover={supportsHover}
+        />
         <div className="preview-scanlines" />
         <div className="bento-preview-play">
           <FiPlay />
@@ -122,28 +141,41 @@ function BentoPreview({ item, onOpen, onDuration }) {
           <span>29.97 fps</span>
         </div>
       </div>
+    </>
+  );
+
+  if (disableAnimations) {
+    return <div className="bento-preview">{content}</div>;
+  }
+
+  return (
+    <motion.div
+      className="bento-preview"
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.25 }}
+      transition={{ duration: 0.6, ease: 'easeOut' }}
+    >
+      {content}
     </motion.div>
   );
 }
 
-function BentoClip({ item, index, onOpen, onDuration }) {
+function BentoClip({ item, index, onOpen, onDuration, supportsHover, disableAnimations }) {
   const [hovering, setHovering] = useState(false);
 
-  return (
-    <motion.div
-      layout
-      className={`bento-clip ${item.color}`}
-      onClick={() => onOpen(item)}
-      onMouseEnter={() => setHovering(true)}
-      onMouseLeave={() => setHovering(false)}
-      whileHover={{ scale: 1.02, y: -4, z: 10 }}
-      transition={{ type: 'spring', stiffness: 260, damping: 20 }}
-    >
+  const inner = (
+    <>
       <div className="bento-clip-track">
         <span className="bento-track-num">V{index + 1}</span>
       </div>
       <div className="bento-clip-media">
-        <HoverVideo videoSrc={item.videoSrc} className="bento-clip-img" onDuration={(d) => onDuration(item.id, d)} />
+        <HoverVideo
+          videoSrc={item.videoSrc}
+          className="bento-clip-img"
+          onDuration={(d) => onDuration(item.id, d)}
+          supportsHover={supportsHover}
+        />
         <div className={`bento-clip-play-icon ${hovering ? 'is-hovering' : ''}`}>
           <FiPlay />
         </div>
@@ -156,6 +188,33 @@ function BentoClip({ item, index, onOpen, onDuration }) {
         <h3>{item.title}</h3>
       </div>
       <div className="bento-clip-bar" style={{ width: `${55 + (index * 6) % 40}%` }} />
+    </>
+  );
+
+  if (disableAnimations) {
+    return (
+      <div
+        className={`bento-clip ${item.color}`}
+        onClick={() => onOpen(item)}
+        onMouseEnter={() => setHovering(true)}
+        onMouseLeave={() => setHovering(false)}
+      >
+        {inner}
+      </div>
+    );
+  }
+
+  return (
+    <motion.div
+      layout
+      className={`bento-clip ${item.color}`}
+      onClick={() => onOpen(item)}
+      onMouseEnter={() => setHovering(true)}
+      onMouseLeave={() => setHovering(false)}
+      whileHover={supportsHover ? { scale: 1.02, y: -4, z: 10 } : undefined}
+      transition={{ type: 'spring', stiffness: 260, damping: 20 }}
+    >
+      {inner}
     </motion.div>
   );
 }
@@ -163,6 +222,33 @@ function BentoClip({ item, index, onOpen, onDuration }) {
 export function Portfolio() {
   const [active, setActive] = useState('All');
   const [durations, setDurations] = useState({});
+  const [supportsHover, setSupportsHover] = useState(false);
+  const [disableAnimations, setDisableAnimations] = useState(false);
+
+  useEffect(() => {
+    const media = window.matchMedia('(hover: hover) and (pointer: fine)');
+    const updateHoverSupport = () => setSupportsHover(media.matches);
+
+    updateHoverSupport();
+    if (media.addEventListener) {
+      media.addEventListener('change', updateHoverSupport);
+    } else {
+      media.addListener(updateHoverSupport);
+    }
+
+    return () => {
+      if (media.removeEventListener) {
+        media.removeEventListener('change', updateHoverSupport);
+      } else {
+        media.removeListener(updateHoverSupport);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    const perf = window.__RI_PERF || {};
+    setDisableAnimations(Boolean(perf.disableAnimations));
+  }, []);
 
   const openVideo = useCallback((item) => {
     const url = '/video-player.html?src=' + encodeURIComponent(item.videoSrc);
@@ -205,7 +291,13 @@ export function Portfolio() {
         </div>
 
         <div className="bento-grid">
-          <BentoPreview item={portfolioWithDuration[0]} onOpen={openVideo} onDuration={handleDuration} />
+          <BentoPreview
+            item={portfolioWithDuration[0]}
+            onOpen={openVideo}
+            onDuration={handleDuration}
+            supportsHover={supportsHover}
+            disableAnimations={disableAnimations}
+          />
 
           <div className="bento-grid-inner">
             {portfolioWithDuration.slice(1).map((item, index) => (
@@ -215,6 +307,8 @@ export function Portfolio() {
                 index={index + 1}
                 onOpen={openVideo}
                 onDuration={handleDuration}
+                supportsHover={supportsHover}
+                disableAnimations={disableAnimations}
               />
             ))}
           </div>

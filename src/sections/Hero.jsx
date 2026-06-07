@@ -2,7 +2,6 @@
 import { motion } from 'framer-motion';
 import { FiActivity, FiCpu, FiPlay, FiScissors } from 'react-icons/fi';
 import { Panel } from '../components/Panel.jsx';
-import { SplineScene } from '../components/SplineScene.jsx';
 import { profile } from '../data/profile.js';
 
 const layers = ['Color Grade', 'Sound Design', 'Motion Text', 'Story Cut'];
@@ -82,10 +81,7 @@ export function Hero() {
           </motion.div>
         </div>
 
-        <div className="relative z-10 grid gap-4 md:grid-cols-[.78fr_1.22fr] lg:grid-cols-1 xl:grid-cols-[.78fr_1.22fr]" data-parallax="-7">
-          <Panel title="Program Monitor" className="min-h-[380px] p-3">
-            <SplineScene />
-          </Panel>
+        <div className="relative z-10 grid gap-4 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-1" data-parallax="-7">
           <div className="hero-panels-right grid gap-4">
             <Panel title="Effect Controls" className="p-4">
               <div className="mb-5 flex items-center justify-between">

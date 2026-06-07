@@ -22,6 +22,7 @@ const backgroundVideo =
 
 export default function App() {
   const [loading, setLoading] = useState(true);
+  const [enableVideoBackground, setEnableVideoBackground] = useState(false);
   const videoRef = useRef(null);
   useLenis();
   useScrollAnimations();
@@ -32,6 +33,33 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const isLowCpu = navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4;
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || window.matchMedia('(pointer: coarse)').matches;
+    const connectionType = navigator.connection?.effectiveType || '';
+    const isSlowConnection = /(2g|slow-2g|3g)/.test(connectionType);
+    const shouldUseVideo = !prefersReducedMotion && !isLowCpu && !isTouchDevice && !isSlowConnection && window.innerWidth >= 1024;
+
+    setEnableVideoBackground(shouldUseVideo);
+  }, []);
+
+  useEffect(() => {
+    const isReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const isLowCpu = navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4;
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || window.matchMedia('(pointer: coarse)').matches;
+    const connectionType = navigator.connection?.effectiveType || '';
+    const isSlowConnection = /(2g|slow-2g|3g)/.test(connectionType);
+    const supportsHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+    const highPerf = !isReducedMotion && !isLowCpu && !isTouchDevice && !isSlowConnection;
+    const disableAnimations = isReducedMotion || isLowCpu || isSlowConnection;
+
+    window.__RI_PERF = { highPerf, supportsHover, disableAnimations };
+  }, [enableVideoBackground]);
+
+  useEffect(() => {
+    if (!enableVideoBackground) return;
+
     const video = videoRef.current;
     if (!video) return;
 
@@ -51,23 +79,34 @@ export default function App() {
 
     observer.observe(hero);
     return () => observer.disconnect();
-  }, []);
+  }, [enableVideoBackground]);
 
   return (
     <main className="relative min-h-screen overflow-x-hidden bg-[#0c0c0c] text-white selection:bg-cyan/30">
       <div className="pointer-events-none fixed inset-0 z-0">
-        <video
-          ref={videoRef}
-          className="pointer-events-none h-full w-full object-cover"
-          autoPlay
-          loop
-          muted
-          playsInline
-          aria-hidden="true"
-          preload="metadata"
-        >
-          <source src={backgroundVideo} type="video/mp4" />
-        </video>
+        {enableVideoBackground ? (
+          <video
+            ref={videoRef}
+            className="pointer-events-none h-full w-full object-cover"
+            autoPlay
+            loop
+            muted
+            playsInline
+            aria-hidden="true"
+            preload="metadata"
+          >
+            <source src={backgroundVideo} type="video/mp4" />
+          </video>
+        ) : (
+          <div
+            className="absolute inset-0"
+            aria-hidden="true"
+            style={{
+              background:
+                'radial-gradient(circle at 20% 0%, rgba(155, 92, 255, 0.22), transparent 34rem), radial-gradient(circle at 78% 12%, rgba(36, 232, 255, 0.16), transparent 32rem), #06070d'
+            }}
+          />
+        )}
         <div className="absolute inset-0 bg-[#05060d]/75" />
       </div>
       <CursorGlow />

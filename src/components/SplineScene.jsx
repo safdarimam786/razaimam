@@ -1,7 +1,27 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { FiFilm } from 'react-icons/fi';
 
 export function SplineScene() {
+  const [highPerf, setHighPerf] = useState(true);
+
+  useEffect(() => {
+    const perf = window.__RI_PERF || {};
+    setHighPerf(Boolean(perf.highPerf));
+  }, []);
+
+  if (!highPerf) {
+    return (
+      <div className="relative h-full min-h-[240px] overflow-hidden rounded-xl border border-line bg-black/20 flex items-center justify-center">
+        <div className="text-center p-6">
+          <div className="mb-3 inline-flex items-center justify-center rounded-md bg-white/[0.04] p-3">
+            <FiFilm className="text-cyan" />
+          </div>
+          <div className="text-sm text-slate-300">Video model preview</div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="relative h-full min-h-[320px] overflow-hidden rounded-xl border border-line bg-black/30">
       <div className="editing-orb-scene" aria-hidden="true">

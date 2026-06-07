@@ -7,12 +7,22 @@ export function useLenis() {
 
   useEffect(() => {
     const isReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const isLowCpu = navigator.hardwareConcurrency <= 4;
-    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-    const isLowDevice = isReducedMotion || isLowCpu;
+    const isLowCpu = navigator.hardwareConcurrency ? navigator.hardwareConcurrency <= 4 : false;
+    const isTouchDevice =
+      'ontouchstart' in window ||
+      navigator.maxTouchPoints > 0 ||
+      window.matchMedia('(pointer: coarse)').matches;
+    const connectionType = navigator.connection?.effectiveType || '';
+    const isSlowConnection = /(2g|slow-2g|3g)/.test(connectionType);
+    const shouldUseNativeScroll = isReducedMotion || isLowCpu || isTouchDevice || isSlowConnection;
+
+    if (shouldUseNativeScroll) {
+      window.lenis = null;
+      return;
+    }
 
     const lenis = new Lenis({
-      duration: isLowDevice ? 1.0 : 1.2,
+      duration: 1.2,
       easing: (t) => 1 - Math.pow(1 - t, 3),
       orientation: 'vertical',
       gestureOrientation: 'vertical',
@@ -20,9 +30,9 @@ export function useLenis() {
       smoothTouch: true,
       wheelMultiplier: 1.0,
       touchMultiplier: isTouchDevice ? 1.0 : 0.8,
-      lerp: isLowDevice ? 0.06 : 0.04,
+      lerp: 0.04,
       syncTouch: true,
-      syncTouchLerp: isLowDevice ? 0.08 : 0.05,
+      syncTouchLerp: 0.05,
       infinite: false,
     });
 
