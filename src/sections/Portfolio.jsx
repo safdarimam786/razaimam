@@ -33,7 +33,7 @@ function formatTimecode(value) {
   return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}:${String(f).padStart(2, '0')}`;
 }
 
-function HoverVideo({ videoSrc, className, onDuration, supportsHover }) {
+function HoverVideo({ videoSrc, posterSrc, className, onDuration, supportsHover }) {
   const [error, setError] = useState(false);
   const [activeSrc, setActiveSrc] = useState('');
   const videoRef = useRef(null);
@@ -87,6 +87,7 @@ function HoverVideo({ videoSrc, className, onDuration, supportsHover }) {
         <video
           ref={videoRef}
           src={activeSrc}
+          poster={posterSrc}
           muted
           loop
           playsInline
@@ -99,7 +100,11 @@ function HoverVideo({ videoSrc, className, onDuration, supportsHover }) {
           }}
         />
       ) : (
-        <div className="bento-media-fallback"><FiFilm /></div>
+        posterSrc ? (
+          <img src={posterSrc} alt="Video thumbnail" className={className} />
+        ) : (
+          <div className="bento-media-fallback"><FiFilm /></div>
+        )
       )}
     </div>
   );
@@ -122,6 +127,7 @@ function BentoPreview({ item, onOpen, onDuration, supportsHover, disableAnimatio
       <div className="bento-preview-body" onClick={() => onOpen(item)} role="button" tabIndex={0} onKeyDown={(e) => e.key === 'Enter' && onOpen(item)}>
         <HoverVideo
           videoSrc={item.videoSrc}
+          posterSrc={item.posterSrc}
           className="bento-preview-img"
           onDuration={(d) => onDuration(item.id, d)}
           supportsHover={supportsHover}
@@ -172,6 +178,7 @@ function BentoClip({ item, index, onOpen, onDuration, supportsHover, disableAnim
       <div className="bento-clip-media">
         <HoverVideo
           videoSrc={item.videoSrc}
+          posterSrc={item.posterSrc}
           className="bento-clip-img"
           onDuration={(d) => onDuration(item.id, d)}
           supportsHover={supportsHover}

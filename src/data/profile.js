@@ -82,5 +82,6 @@ export const portfolio = [
   id: `video-${index}`,
   ...item,
   videoSrc: `${cloudBase}/video/upload/q_auto/${item.file}`,
+  posterSrc: `${cloudBase}/video/upload/q_auto/so_0/${item.file.replace('.mp4', '.jpg')}`,
   color: colors[index % colors.length],
 }));
